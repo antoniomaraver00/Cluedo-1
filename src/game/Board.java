@@ -71,11 +71,11 @@ public class Board {
 				// initialize player objects
 				for (int i = 0; i < numOfPlayers; i++) {
 					// ask player to choose a character
-					System.out.println("Choose a character: ");
+					System.out.println("Player " + (i + 1) + " Choose a character: ");
 					String[] p = availablePlayers(unavailablePlayers, playerNames.length - i);
 
 					// print list of available characters
-					System.out.println(Arrays.toString(p));
+					printArray(p);
 					int index = scn.nextInt();
 
 					// add the chosen character to the unavailablePlayers array, so it can be
@@ -93,6 +93,12 @@ public class Board {
 			} catch (IllegalArgumentException e) {
 				System.out.println("Please type a valid number");
 			}
+		}
+	}
+
+	private void printArray(String[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			System.out.println((i + 1) + "- " + arr[i]);
 		}
 	}
 
