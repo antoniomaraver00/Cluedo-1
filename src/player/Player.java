@@ -6,13 +6,11 @@ import cards.Card;
 public class Player {
 	private String name;
 	private Position positon;
-	private Move move;
 	private ArrayList<Card> cards;
 
-	public Player(String name, Position position, Move move, ArrayList<Card> cards) {
+	public Player(String name, Position position, ArrayList<Card> cards) {
 		this.name = name;
 		this.positon = position;
-		this.move = move;
 		this.cards = cards;
 	}
 	
@@ -22,10 +20,6 @@ public class Player {
 
 	public Position getPositon() {
 		return positon;
-	}
-
-	public Move getMove() {
-		return move;
 	}
 
 	public Card getCard(int index) {
@@ -62,15 +56,6 @@ public class Player {
 		return wasSet;
 	}
 
-	public boolean setMove(Move aNewMove) {
-		boolean wasSet = false;
-		if (aNewMove != null) {
-			move = aNewMove;
-			wasSet = true;
-		}
-		return wasSet;
-	}
-
 	public boolean setCards(Card... newCards) {
 		boolean wasSet = false;
 		ArrayList<Card> verifiedCards = new ArrayList<Card>();
@@ -89,5 +74,9 @@ public class Player {
 		cards.addAll(verifiedCards);
 		wasSet = true;
 		return wasSet;
+	}
+	
+	public String toString() {
+		return getName() + " : " + getPositon();
 	}
 }
