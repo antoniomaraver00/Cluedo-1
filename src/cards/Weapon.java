@@ -1,7 +1,10 @@
 package cards;
 
 public class Weapon implements Card {
-	public Weapon() {
+	String name;
+	
+	public Weapon(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -9,4 +12,7 @@ public class Weapon implements Card {
 		return this;
 	}
 
+	public String getName() {
+		return name;
+	}
 }

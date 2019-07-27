@@ -2,6 +2,7 @@ package game;
 
 public class grid {
 	private char[][] mainGrid = new char[25][50];// 2d array of the entire board grid
+	
 
 	public grid() {
 		parseGrid();
@@ -48,21 +49,31 @@ public class grid {
 		return mainGrid[row][col];
 	}
 
-	public void display() {
+	public void display() {// display the current board
+		
 		for (int i = 0; i < 25; i++) {
 			for (int j = 0; j < 49; j++) {
 				System.out.print(mainGrid[i][j]);
 			}
 			System.out.print('\n');
 		}
-	}// display the current board
-
+	}
+	  
+	
 	public void setGridChar(int oldRow, int oldCol, int newRow, int newCol, char playerIcon, Board board) {
 		// todo code to check if the move is valid(desired location is unoccupied, valid cell, within dice number range)
-		                                                                                 
+		                                                                                
 		 mainGrid[oldRow][oldCol] ='_';
 		 mainGrid[newRow][newCol] =playerIcon;
-		 display();
+		 
+
+	}
+	public void setGridChar(int newRow, int newCol, char playerIcon, Board board) {
+		
+		                                                                                 
+		 
+		 mainGrid[newRow][newCol] =playerIcon;
+		 
 
 	}
 

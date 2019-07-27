@@ -31,7 +31,7 @@ public class Position {
 	public int getY() {
 		return y;
 	}
-
+	
 	public void delete() {
 	}
 	public void translateToBoard() {//EDIT
@@ -39,6 +39,6 @@ public class Position {
 	}
 
 	public String toString() {
-		return super.toString() + "[" + "x" + ":" + getX() + "," + "y" + ":" + getY() + "]";
+		return "x" + ": " + getX() + ", " + "y" + ": " + getY();
 	}
 }

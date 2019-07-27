@@ -5,27 +5,48 @@ import cards.Card;
 
 public class Player {
 	private String name;
+	private char boardName; 
 	private Position positon;
-	private Move move;
 	private ArrayList<Card> cards;
 
-	public Player(String name, Position position, Move move, ArrayList<Card> cards) {
+	public Player(String name, Position position, ArrayList<Card> cards) {
 		this.name = name;
 		this.positon = position;
-		this.move = move;
 		this.cards = cards;
+		this.boardName=generateBoardName();
 	}
-	
+	private char generateBoardName(){
+		char correctChar='x';
+		switch (name) {
+		case "Miss Scarlett" :
+			correctChar='S';
+			break;
+		case "Colonel Mustard" :
+			correctChar='M';
+			break;
+		case "Mrs. White" :
+			correctChar='W';
+			break;
+		case "Mr. Green" :
+			correctChar='G';
+			break;
+		case "Mrs. Peacock" :
+			correctChar='p';
+			break;
+		case "Professor Plum" :
+			correctChar='P';
+			break;
+			
+		}
+		return correctChar;
+	}
+	public char getBoardChar() {return boardName;}// get the board name of player, e.g; Mr. Green = G.
 	public String getName() {
 		return name;
 	}
 
 	public Position getPositon() {
 		return positon;
-	}
-
-	public Move getMove() {
-		return move;
 	}
 
 	public Card getCard(int index) {
@@ -62,15 +83,6 @@ public class Player {
 		return wasSet;
 	}
 
-	public boolean setMove(Move aNewMove) {
-		boolean wasSet = false;
-		if (aNewMove != null) {
-			move = aNewMove;
-			wasSet = true;
-		}
-		return wasSet;
-	}
-
 	public boolean setCards(Card... newCards) {
 		boolean wasSet = false;
 		ArrayList<Card> verifiedCards = new ArrayList<Card>();
@@ -89,5 +101,9 @@ public class Player {
 		cards.addAll(verifiedCards);
 		wasSet = true;
 		return wasSet;
+	}
+	
+	public String toString() {
+		return getName() + " : " + getPositon();
 	}
 }
