@@ -1,5 +1,6 @@
 package player;
 
+
 public class Dice {
 	public Dice() {
 	}

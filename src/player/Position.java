@@ -34,6 +34,9 @@ public class Position {
 
 	public void delete() {
 	}
+	public void translateToBoard() {//EDIT
+		
+	}
 
 	public String toString() {
 		return super.toString() + "[" + "x" + ":" + getX() + "," + "y" + ":" + getY() + "]";

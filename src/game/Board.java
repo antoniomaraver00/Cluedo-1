@@ -1,4 +1,7 @@
 package game;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import cards.Card;
@@ -10,9 +13,14 @@ public class Board {
 	private ArrayList<Room> rooms;
 	private ArrayList<Card> cards;
 
+	private String[][] cc = new String[25][24];
+	private grid boardGrid;
+	private String[][] arrayGrid = new String[50][48];
+
 	public Board() {
 		rooms = new ArrayList<Room>();
 		cards = new ArrayList<Card>();
+		createBoardCells();
 	}
 
 	public void setPlayer(String name) {
@@ -73,6 +81,16 @@ public class Board {
 	}
 
 	public void shuffleCards() {
+
+	}
+
+	public void createBoardCells() {
+		boardGrid = new grid();
+		boardGrid.setGridChar(1,3,3,3,'P', this);
+	}
+	
+
+	public void applyToGrid() {
 
 	}
 
