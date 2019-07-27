@@ -7,7 +7,7 @@ public class Dice {
 
 	public int roll() {
 		Random rand = new Random();
-		return rand.nextInt(6);
+		return rand.nextInt(6);//fix, think this can include 0...
 		
 	}
 

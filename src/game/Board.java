@@ -9,7 +9,7 @@ import player.Player;
 import player.Position;
 
 public class Board {
-	private grid boardGrid;// active grid of the board
+	private Grid boardGrid;// active grid of the board
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Room[] rooms;
 	private Weapon[] weapons;
@@ -217,7 +217,7 @@ public class Board {
 	}
 
 	public void createBoardCells() {
-		boardGrid = new grid();
+		boardGrid = new Grid();
 		// boardGrid.setGridChar(1,3,3,3,'P', this);
 	}
 
