@@ -1,9 +1,5 @@
 package game;
 
-
-import java.io.File;
-import java.io.FileNotFoundException;
-
 import java.util.*;
 
 import cards.Card;
@@ -13,7 +9,7 @@ import player.Player;
 import player.Position;
 
 public class Board {
-	private grid boardGrid;//active grid of the board
+	private grid boardGrid;// active grid of the board
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Room[] rooms;
 	private Weapon[] weapons;
@@ -30,13 +26,8 @@ public class Board {
 
 	private final String[] weaponNames = { "Dagger", "Lead Pipe", "Spanner", "Candlestick", "Revolver", "Rope" };
 
-	
-	
-	
-
 	public Board() {
-
-		//rooms = new ArrayList<Room>();
+		// rooms = new ArrayList<Room>();
 		cards = new ArrayList<Card>();
 		createBoardCells();
 
@@ -55,18 +46,10 @@ public class Board {
 			weapons[i] = new Weapon(weaponNames[i]);
 			addCard(weapons[i]);
 		}
-
 	}
 
 	public void setup() {
 		Scanner scn = new Scanner(System.in);
-		String s = ""; // available characters to be chosen
-
-		for (int i = 0; i < playerNames.length; i++) {
-			s += i + 1 + "- " + playerNames[i];
-			s += "\n";
-		}
-
 		while (true) {
 			try {
 				// get the number of players
@@ -102,27 +85,33 @@ public class Board {
 					players.add(createPlayer(playerName));
 				}
 
-				return;
+				break;
 			} catch (ArrayIndexOutOfBoundsException e) {
 				System.out.println("Please type a valid number");
 			} catch (IllegalArgumentException e) {
-				System.out.println("Please type a valid number");
+				System.out.println(e.getMessage());
 			}
-			////////////////////// tyson edit from here////////////////
-			createBoardCells();//generate board
-			spawnPlayers();//allocate player spawn positions
-			for (Player p : players) {boardGrid.setGridChar(p.getPositon().getY(),p.getPositon().getX(),p.getBoardChar(), this);}//set position
-			boardGrid.display();
 		}
+
+//////////////////////tyson edit from here////////////////
+		createBoardCells();// generate board
+		spawnPlayers();// allocate player spawn positions
+		for (Player p : players) {
+			boardGrid.setGridChar(p.getPositon().getY(), p.getPositon().getX(), p.getBoardChar(), this);
+		} // set position
+		boardGrid.display();
 	}
+
 	private void spawnPlayers() {
-		int[] spawnPos = {0,15,0,33,24,33,24,15,17,1,12,47};//possible x,y spawn positions in subsequent order (row,col,row..)
-		int count=0;
+		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };// possible x,y spawn positions in subsequent
+																			// order (row,col,row..)
+		int count = 0;
 		for (Player p : players) {
 			p.getPositon().setY(spawnPos[count++]);
 			p.getPositon().setX(spawnPos[count++]);
 		}
 	}
+
 	private void printArray(String[] arr) {
 		for (int i = 0; i < arr.length; i++) {
 			System.out.println((i + 1) + "- " + arr[i]);
@@ -177,7 +166,7 @@ public class Board {
 	}
 
 	private Player createPlayer(String name) {
-		return new Player(name, getRandomPosition(), getRandomHand());
+		return new Player(name, new Position(0, 0), getRandomHand());
 	}
 
 	private ArrayList<Card> getRandomHand() {
@@ -187,14 +176,6 @@ public class Board {
 		hands.remove(index);
 
 		return h;
-	}
-
-	private Position getRandomPosition() {
-		Random rand = new Random();
-		int x = rand.nextInt(24);
-		int y = rand.nextInt(25);
-
-		return new Position(x, y);
 	}
 
 	public ArrayList<Player> getPlayers() {
@@ -222,8 +203,7 @@ public class Board {
 	}
 
 	public Card getCard(int index) {
-		Card aCard = cards.get(index);
-		return aCard;
+		return cards.get(index);
 	}
 
 	public ArrayList<Card> getCards() {
@@ -231,21 +211,15 @@ public class Board {
 		return newCards;
 	}
 
-
 	public boolean hasCards() {
 		boolean has = cards.size() > 0;
 		return has;
 	}
 
-	public void shuffleCards() {
-
-	}
-
 	public void createBoardCells() {
 		boardGrid = new grid();
-		//boardGrid.setGridChar(1,3,3,3,'P', this);
+		// boardGrid.setGridChar(1,3,3,3,'P', this);
 	}
-	
 
 	public void applyToGrid() {
 
@@ -254,5 +228,4 @@ public class Board {
 	public String toString() {
 		return super.toString() + "[" + "]";
 	}
-
 }
