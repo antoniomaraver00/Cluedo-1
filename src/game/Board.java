@@ -4,6 +4,7 @@ import java.util.*;
 
 import cards.Card;
 import cards.Room;
+import cards.Suspect;
 import cards.Weapon;
 import player.Player;
 import player.Position;
@@ -27,9 +28,12 @@ public class Board {
 	private final String[] weaponNames = { "Dagger", "Lead Pipe", "Spanner", "Candlestick", "Revolver", "Rope" };
 
 	public Board() {
-		// rooms = new ArrayList<Room>();
 		cards = new ArrayList<Card>();
 		createBoardCells();
+
+		for (int i = 0; i < playerNames.length; i++) {
+			cards.add(new Suspect(playerNames[i]));
+		}
 
 		// initialize rooms, then add them to the cards list
 		rooms = new Room[9];
@@ -82,7 +86,8 @@ public class Board {
 					unavailablePlayers[i] = playerName;
 
 					// add a new player object to the list of players
-					players.add(createPlayer(playerName));
+					Player player = createPlayer(playerName);
+					players.add(player);
 				}
 
 				break;
@@ -90,6 +95,7 @@ public class Board {
 				System.out.println("Please type a valid number");
 			} catch (IllegalArgumentException e) {
 				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 
@@ -132,18 +138,46 @@ public class Board {
 		return availablePlayers;
 	}
 
+	private void hideCards() {
+		Random rand = new Random();
+
+		int index = rand.nextInt(cards.size());
+		Card c = cards.get(index);
+
+		// hide one random suspect
+		while (!(c instanceof Suspect)) {
+			index = rand.nextInt(cards.size());
+			c = cards.get(index);
+		}
+
+		hiddenCards.add(c);
+		removeCard(c);
+
+		// hide one random room
+		while (!(c instanceof Room)) {
+			index = rand.nextInt(cards.size());
+			c = cards.get(index);
+		}
+
+		hiddenCards.add(c);
+		removeCard(c);
+
+		// hide one random weapon
+		while (!(c instanceof Weapon)) {
+			index = rand.nextInt(cards.size());
+			c = cards.get(index);
+		}
+
+		hiddenCards.add(c);
+		removeCard(c);
+	}
+
 	private void distributeCards(int numOfPlayers) {
 		// shuffle cards
 		Collections.shuffle(cards);
-		Random rand = new Random();
 
-		// hide 3 random cards
-		for (int i = 0; i < 3; i++) {
-			int index = rand.nextInt(cards.size());
-			Card c = cards.get(index);
-			hiddenCards.add(c);
-			removeCard(c);
-		}
+		// hide three random cards
+		hideCards();
 
 		// get number of cards per player
 		int cardsPerPlayer = (cards.size() - 1) / numOfPlayers;
@@ -151,16 +185,14 @@ public class Board {
 		// distribute hands
 		for (int i = 0; i < numOfPlayers; i++) {
 			ArrayList<Card> currHand = new ArrayList<>();
-			for (int j = 0; j < cardsPerPlayer; j++) {
-				Card c = cards.get(j);
-				currHand.add(c);
-				removeCard(c);
-
-				// make sure there are remaining cards to be distributed
-				if (cards.size() == 0) {
-					break;
+			for (int j = 0; j < cardsPerPlayer && cards.size() > 0; j++) {
+				if (j < cards.size()) {
+					Card card = cards.get(j);
+					currHand.add(card);
+					removeCard(card);
 				}
 			}
+			
 			hands.add(currHand);
 		}
 	}

@@ -1,8 +1,14 @@
 package cards;
 
 public class Suspect implements Card {
-
-	public Suspect() {
+	private String name;
+	
+	public Suspect(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 
 	@Override
