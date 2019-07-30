@@ -12,6 +12,7 @@ import player.Position;
 public class Board {
 	private Grid boardGrid;// active grid of the board
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
+	private Dice dice;
 	private Room[] rooms;
 	private Weapon[] weapons;
 	private ArrayList<Card> hiddenCards = new ArrayList<>(); // cards to be guessed
@@ -30,7 +31,7 @@ public class Board {
 	public Board() {
 		cards = new ArrayList<Card>();
 		createBoardCells();
-
+		dice = new Dice();
 		for (int i = 0; i < playerNames.length; i++) {
 			cards.add(new Suspect(playerNames[i]));
 		}
@@ -106,8 +107,54 @@ public class Board {
 			boardGrid.setGridChar(p.getPositon().getY(), p.getPositon().getX(), p.getBoardChar(), this);
 		} // set position
 		boardGrid.display();
+		activeRound();
 	}
-
+	private void activeRound() {
+		int highestRoll =findWhoGoesFirst();	
+		while (true) {
+			
+			for (Player currentPlayerTurn : players) {
+				
+			}
+		}
+	}
+	public int findWhoGoesFirst(){
+		ArrayList<Integer> playerRolls = new ArrayList<>();
+		Dice die = new Dice();
+		formatPrint("each player role the dice to decide who goes first");
+		for (int i = 0; i<players.size(); i++) {
+			Scanner sc = new Scanner(System.in);
+			
+			formatPrint(players.get(i).getName()+"'s next to roll");
+			formatPrint("press r to roll die");
+			
+			String r;
+			r= sc.next();
+			if (r.equalsIgnoreCase("r")) {
+				int diceRoll=die.roll();
+				playerRolls.add(diceRoll);
+			}
+			else {
+				formatPrint("remember, press r to roll die. try again");
+				i--;
+			}
+			
+			
+		}
+		return Collections.max(playerRolls);
+	}
+	public void formatPrint(String s) {
+		System.out.println("-------------------------------------------------");
+		System.out.println(s);
+		
+	}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// board setup ///////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
 	private void spawnPlayers() {
 		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };// possible x,y spawn positions in subsequent
 																			// order (row,col,row..)
@@ -209,7 +256,9 @@ public class Board {
 
 		return h;
 	}
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// getters and setters ///////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public ArrayList<Player> getPlayers() {
 		return players;
 	}

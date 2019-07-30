@@ -1,4 +1,4 @@
-package player;
+package game;
 import java.util.*;
 
 public class Dice {
