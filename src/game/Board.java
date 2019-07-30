@@ -107,14 +107,17 @@ public class Board {
 			boardGrid.setGridChar(p.getPositon().getY(), p.getPositon().getX(), p.getBoardChar(), this);
 		} // set position
 		boardGrid.display();
-		activeRound();
+		activeRound();//Begin the round
 	}
 	private void activeRound() {
-		int highestRoll =findWhoGoesFirst();	
+		int highestRoller =findWhoGoesFirst();	//players roll the dice to see who goes first
 		while (true) {
 			
-			for (Player currentPlayerTurn : players) {
-				
+			for (int i = 0; i<players.size(); i++) {
+				if (highestRoller!=0) {//offset the index to have the player who rolled the highest initial roll go first
+					i=highestRoller;
+					highestRoller=0;
+				}
 			}
 		}
 	}
