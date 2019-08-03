@@ -134,8 +134,8 @@ public class Board {
 	public void activeMove(int roll) {
 		int rollCount = roll;
 		while (rollCount > 0) {
-			formatPrint("moving keys: WASD .   walk south: S   walk north: N   walk east: D   walk west: A");
-
+			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
+			players.get(0).getMove().getGrid().display();// ^&*^&*^&*^&*^&* test ^&*^&*^&*^&*^&*
 			Scanner sc = new Scanner(System.in);
 			formatPrint("enter move key");
 
@@ -158,7 +158,7 @@ public class Board {
 				formatPrint("incorrect input or location, try again");
 				continue;
 			}
-
+			
 		}
 	}
 
