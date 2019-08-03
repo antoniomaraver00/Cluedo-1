@@ -1,4 +1,5 @@
-package game;
+package player;
+
 
 public class Grid {
 	private char[][] mainGrid = new char[25][50];// 2d array of the entire board grid
@@ -60,21 +61,13 @@ public class Grid {
 	}
 	  
 	
-	public void setGridChar(int oldRow, int oldCol, int newRow, int newCol, char playerIcon, Board board) {
-		// todo code to check if the move is valid(desired location is unoccupied, valid cell, within dice number range)
-		                                                                                
+	public void setGridChar(int oldRow, int oldCol, int newRow, int newCol, char playerIcon) {
+		// todo code to check if the move is valid(desired location is unoccupied, valid cell, within dice number range)		                                                                                
 		 mainGrid[oldRow][oldCol] ='_';
-		 mainGrid[newRow][newCol] =playerIcon;
-		 
-
+		 mainGrid[newRow][newCol] =playerIcon;		 
 	}
-	public void setGridChar(int newRow, int newCol, char playerIcon, Board board) {
-		
-		                                                                                 
-		 
-		 mainGrid[newRow][newCol] =playerIcon;
-		 
-
+	public void setGridChar(int newRow, int newCol, char playerIcon) {//set new pos without changing old position				                                                                                 		 
+		 mainGrid[newRow][newCol] =playerIcon;	 
 	}
 
 }// end

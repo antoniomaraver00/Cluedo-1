@@ -1,4 +1,5 @@
 package player;
+
 import java.util.*;
 
 import cards.Card;
@@ -6,14 +7,16 @@ import cards.Card;
 public class Player {
 	private String name;
 	private char boardName; 
-	private Position positon;
+	private Position position;
+	private Move move;
 	private ArrayList<Card> cards;
 
 	public Player(String name, Position position, ArrayList<Card> cards) {
 		this.name = name;
-		this.positon = position;
+		this.position = position;
 		this.cards = cards;
 		this.boardName=generateBoardName();
+		this.move = new Move();
 	}
 	private char generateBoardName(){
 		char correctChar='x';
@@ -40,13 +43,39 @@ public class Player {
 		}
 		return correctChar;
 	}
+	
+	
+	public void playerMove(int newY,int newX) {
+		//need to check if move is valid (todo)
+		
+		move.apply(position,newY, newX,boardName);
+		
+	}
+	
+	
+	public void spawnMove(int row, int col) {
+		position.setY(row);
+		position.setX(col);
+		move.moveSpawnPos(row,col, boardName);
+	}
+	
+	
+	
+	
+	public boolean isValid(int row, int col) {
+		return move.isMoveValid(position.getY()+row,position.getX()+col);
+	}
+	
+	
 	public char getBoardChar() {return boardName;}// get the board name of player, e.g; Mr. Green = G.
 	public String getName() {
 		return name;
 	}
-
+	public Move getMove() {
+		return move;
+	}
 	public Position getPositon() {
-		return positon;
+		return position;
 	}
 
 	public Card getCard(int index) {
@@ -77,7 +106,7 @@ public class Player {
 	public boolean setPositon(Position aNewPositon) {
 		boolean wasSet = false;
 		if (aNewPositon != null) {
-			positon = aNewPositon;
+			position = aNewPositon;
 			wasSet = true;
 		}
 		return wasSet;

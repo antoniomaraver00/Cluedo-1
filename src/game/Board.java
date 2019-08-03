@@ -10,8 +10,9 @@ import player.Player;
 import player.Position;
 
 public class Board {
-	private Grid boardGrid;// active grid of the board
+
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
+	private Player currentPlayer;
 	private Dice dice;
 	private Room[] rooms;
 	private Weapon[] weapons;
@@ -30,7 +31,6 @@ public class Board {
 
 	public Board() {
 		cards = new ArrayList<Card>();
-		createBoardCells();
 		dice = new Dice();
 		for (int i = 0; i < playerNames.length; i++) {
 			cards.add(new Suspect(playerNames[i]));
@@ -100,71 +100,144 @@ public class Board {
 			}
 		}
 
-//////////////////////tyson edit from here////////////////
-		createBoardCells();// generate board
 		spawnPlayers();// allocate player spawn positions
-		for (Player p : players) {
-			boardGrid.setGridChar(p.getPositon().getY(), p.getPositon().getX(), p.getBoardChar(), this);
-		} // set position
-		boardGrid.display();
-		activeRound();//Begin the round
+
+		players.get(0).getMove().getGrid().display();
+		activeRound();// Begin the round
 	}
+//////////////////////game starts////////////////
+
 	private void activeRound() {
-		int highestRoller =findWhoGoesFirst();	//players roll the dice to see who goes first
+
+		int highestRoller=0;
+		highestRoller = findWhoGoesFirst(); // players roll the dice to see who goes first
+		currentPlayer = players.get(highestRoller);// assign the currentPlayer field as the player @ index of highest
+													// roller (player to start)
+
 		while (true) {
-			
-			for (int i = 0; i<players.size(); i++) {
-				if (highestRoller!=0) {//offset the index to have the player who rolled the highest initial roll go first
-					i=highestRoller;
-					highestRoller=0;
+
+			for (int i = 0; i < players.size(); i++) {
+				if (highestRoller != 0) {// offset the index to have the player who rolled the highest initial roll go
+											// first
+					i = highestRoller;
+					highestRoller = 0;
 				}
+				currentPlayer=players.get(i);
+				int roll = playerRollDice();
+				activeMove(roll);
+
 			}
 		}
 	}
-	public int findWhoGoesFirst(){
+//////////////////////////////////////////////////	
+
+	public void activeMove(int roll) {
+		int rollCount = roll;
+		while (rollCount > 0) {
+			formatPrint("moving keys: WASD .   walk south: S   walk north: N   walk east: D   walk west: A");
+
+			Scanner sc = new Scanner(System.in);
+			formatPrint("enter move key");
+
+			String r;
+			r = sc.next();
+			if (r.equalsIgnoreCase("w")&&currentPlayer.isValid(-1,0)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY()-1,currentPlayer.getPositon().getX()+0); rollCount--;
+			}
+			else if (r.equalsIgnoreCase("d")&&currentPlayer.isValid(0,2)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY()+0,currentPlayer.getPositon().getX()+2); rollCount--;
+			}
+			else if (r.equalsIgnoreCase("s")&&currentPlayer.isValid(1,0)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY()+1,currentPlayer.getPositon().getX()+0); rollCount--;
+			}
+			else if (r.equalsIgnoreCase("a")&&currentPlayer.isValid(0,-2)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY()+0,currentPlayer.getPositon().getX()+-2); rollCount--;
+			}
+
+			else {
+				formatPrint("incorrect input or location, try again");
+				continue;
+			}
+
+		}
+	}
+
+	public int playerRollDice() {
+		Dice die = new Dice();
+		int diceRoll=0;
+		
+		while (true) {
+			Scanner sc = new Scanner(System.in);
+
+			formatPrint(currentPlayer.getName() + "'s next to roll");
+			formatPrint("press r to roll die");
+
+			String r;
+			r = sc.next();
+			if (r.equalsIgnoreCase("r")) {
+				diceRoll = die.roll();
+				break;
+				
+				
+
+			} else {
+				formatPrint("remember, press r to roll die. try again");
+			}
+
+		}
+		return diceRoll;
+
+	}
+
+	public int findWhoGoesFirst() {
 		ArrayList<Integer> playerRolls = new ArrayList<>();
 		Dice die = new Dice();
 		formatPrint("each player role the dice to decide who goes first");
-		for (int i = 0; i<players.size(); i++) {
+		for (int i = 0; i < players.size(); i++) {
 			Scanner sc = new Scanner(System.in);
-			
-			formatPrint(players.get(i).getName()+"'s next to roll");
+
+			formatPrint(players.get(i).getName() + "'s next to roll");
 			formatPrint("press r to roll die");
-			
+
 			String r;
-			r= sc.next();
+			r = sc.next();
 			if (r.equalsIgnoreCase("r")) {
-				int diceRoll=die.roll();
+				int diceRoll = die.roll();
+				System.out.println("rolled a " + diceRoll);
 				playerRolls.add(diceRoll);
-			}
-			else {
+			} else {
 				formatPrint("remember, press r to roll die. try again");
 				i--;
 			}
-			
-			
+
 		}
-		return Collections.max(playerRolls);
+		for (int i = 0; i < playerRolls.size(); i++) {
+			if (playerRolls.get(i) == Collections.max(playerRolls)) {
+				formatPrint(players.get(i).getName() + " rolled the highest with a roll of: " + playerRolls.get(i));
+				return i;
+			}
+		}
+		return 0;
 	}
+
 	public void formatPrint(String s) {
 		System.out.println("-------------------------------------------------");
 		System.out.println(s);
-		
+
 	}
-	
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////// board setup ///////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	
+
 	private void spawnPlayers() {
 		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };// possible x,y spawn positions in subsequent
 																			// order (row,col,row..)
 		int count = 0;
 		for (Player p : players) {
-			p.getPositon().setY(spawnPos[count++]);
-			p.getPositon().setX(spawnPos[count++]);
+
+			p.spawnMove(spawnPos[count++], spawnPos[count++]);
+
 		}
 	}
 
@@ -242,7 +315,7 @@ public class Board {
 					removeCard(card);
 				}
 			}
-			
+
 			hands.add(currHand);
 		}
 	}
@@ -259,6 +332,7 @@ public class Board {
 
 		return h;
 	}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////// getters and setters ///////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,11 +372,6 @@ public class Board {
 	public boolean hasCards() {
 		boolean has = cards.size() > 0;
 		return has;
-	}
-
-	public void createBoardCells() {
-		boardGrid = new Grid();
-		// boardGrid.setGridChar(1,3,3,3,'P', this);
 	}
 
 	public void applyToGrid() {

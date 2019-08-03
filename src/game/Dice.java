@@ -7,8 +7,11 @@ public class Dice {
 
 	public int roll() {
 		Random rand = new Random();
-		return rand.nextInt(6);//fix, think this can include 0...
+		int num = rand.nextInt(7);
+		if (num==0) {return roll();}//quick fix to exclude 0
+		return num;
 		
 	}
+	
 
 }
