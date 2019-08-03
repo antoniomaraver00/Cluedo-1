@@ -108,7 +108,6 @@ public class Board {
 //////////////////////game starts////////////////
 
 	private void activeRound() {
-
 		int highestRoller = 0;
 		highestRoller = findWhoGoesFirst(); // players roll the dice to see who goes first
 		currentPlayer = players.get(highestRoller);// assign the currentPlayer field as the player @ index of highest
@@ -122,6 +121,7 @@ public class Board {
 					i = highestRoller;
 					highestRoller = 0;
 				}
+				currentPlayer = players.get(i);
 				currentPlayer = players.get(i);
 				int roll = playerRollDice();
 				activeMove(roll);
@@ -141,6 +141,7 @@ public class Board {
 
 			String r;
 			r = sc.next();
+
 			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
 				rollCount--;
@@ -153,13 +154,30 @@ public class Board {
 			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
 				rollCount--;
-			}
+				if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
+					currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1,
+							currentPlayer.getPositon().getX() + 0);
+					rollCount--;
+				} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
+					currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0,
+							currentPlayer.getPositon().getX() + 2);
+					rollCount--;
+				} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
+					currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1,
+							currentPlayer.getPositon().getX() + 0);
+					rollCount--;
+				} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
+					currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0,
+							currentPlayer.getPositon().getX() + -2);
+					rollCount--;
+				}
 
-			else {
-				formatPrint("incorrect input or location, try again");
-				continue;
-			}
+				else {
+					formatPrint("incorrect input or location, try again");
+					continue;
+				}
 
+			}
 		}
 	}
 
@@ -209,6 +227,12 @@ public class Board {
 				i--;
 			}
 
+		}
+		for (int i = 0; i < playerRolls.size(); i++) {
+			if (playerRolls.get(i) == Collections.max(playerRolls)) {
+				formatPrint(players.get(i).getName() + " rolled the highest with a roll of: " + playerRolls.get(i));
+				return i;
+			}
 		}
 		for (int i = 0; i < playerRolls.size(); i++) {
 			if (playerRolls.get(i) == Collections.max(playerRolls)) {

@@ -55,7 +55,6 @@ public class Player {
 		
 	}
 	
-	
 	public void spawnMove(int row, int col) {
 		position.setY(row);
 		position.setX(col);
