@@ -14,6 +14,7 @@ public class Board {
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Player currentPlayer;
 	private Dice dice;
+	private Suspect[] suspects;
 	private Room[] rooms;
 	private Weapon[] weapons;
 	private ArrayList<Card> hiddenCards = new ArrayList<>(); // cards to be guessed
@@ -32,8 +33,12 @@ public class Board {
 	public Board() {
 		cards = new ArrayList<Card>();
 		dice = new Dice();
+
+		suspects = new Suspect[playerNames.length];
+
 		for (int i = 0; i < playerNames.length; i++) {
-			cards.add(new Suspect(playerNames[i]));
+			suspects[i] = new Suspect(playerNames[i]);
+			cards.add(suspects[i]);
 		}
 
 		// initialize rooms, then add them to the cards list
@@ -108,9 +113,7 @@ public class Board {
 //////////////////////game starts////////////////
 
 	private void activeRound() {
-
-		int highestRoller=0;
-		highestRoller = findWhoGoesFirst(); // players roll the dice to see who goes first
+		int highestRoller = findWhoGoesFirst(); // players roll the dice to see who goes first
 		currentPlayer = players.get(highestRoller);// assign the currentPlayer field as the player @ index of highest
 													// roller (player to start)
 
@@ -122,7 +125,7 @@ public class Board {
 					i = highestRoller;
 					highestRoller = 0;
 				}
-				currentPlayer=players.get(i);
+				currentPlayer = players.get(i);
 				int roll = playerRollDice();
 				activeMove(roll);
 
@@ -136,37 +139,38 @@ public class Board {
 		while (rollCount > 0) {
 			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
 			players.get(0).getMove().getGrid().display();// display grid
-			if (getRoom(currentPlayer)!="NOT IN ROOM") {}//proccess player if they enter room
+			
 			Scanner sc = new Scanner(System.in);
 			formatPrint("enter move key");
 
 			String r;
 			r = sc.next();
-			if (r.equalsIgnoreCase("w")&&currentPlayer.isValid(-1,0)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()-1,currentPlayer.getPositon().getX()+0); rollCount--;
-			}
-			else if (r.equalsIgnoreCase("d")&&currentPlayer.isValid(0,2)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()+0,currentPlayer.getPositon().getX()+2); rollCount--;
-			}
-			else if (r.equalsIgnoreCase("s")&&currentPlayer.isValid(1,0)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()+1,currentPlayer.getPositon().getX()+0); rollCount--;
-			}
-			else if (r.equalsIgnoreCase("a")&&currentPlayer.isValid(0,-2)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()+0,currentPlayer.getPositon().getX()+-2); rollCount--;
-			}
 
-			else {
-				formatPrint("incorrect input or location, try again");
-				continue;
+			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
+				rollCount--;
+			} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
+				rollCount--;
+			} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
+				rollCount--;
+			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
+				rollCount--;
+				
+
 			}
-			
+			if (getRoom(currentPlayer)!="NOT IN ROOM") {
+				System.out.println(getRoom(currentPlayer));
+			}//proccess player if they enter room
 		}
 	}
 
 	public int playerRollDice() {
 		Dice die = new Dice();
-		int diceRoll=0;
-		
+		int diceRoll = 0;
+
 		while (true) {
 			Scanner sc = new Scanner(System.in);
 
@@ -178,8 +182,6 @@ public class Board {
 			if (r.equalsIgnoreCase("r")) {
 				diceRoll = die.roll();
 				break;
-				
-				
 
 			} else {
 				formatPrint("remember, press r to roll die. try again");
@@ -313,9 +315,6 @@ public class Board {
 	}
 
 	private void distributeCards(int numOfPlayers) {
-		// shuffle cards
-		Collections.shuffle(cards);
-
 		// hide three random cards
 		hideCards();
 
@@ -333,6 +332,7 @@ public class Board {
 				}
 			}
 
+			// add the current hand to the list of hands
 			hands.add(currHand);
 		}
 	}
