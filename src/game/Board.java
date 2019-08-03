@@ -14,6 +14,7 @@ public class Board {
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Player currentPlayer;
 	private Dice dice;
+	private Suspect[] suspects;
 	private Room[] rooms;
 	private Weapon[] weapons;
 	private ArrayList<Card> hiddenCards = new ArrayList<>(); // cards to be guessed
@@ -32,8 +33,12 @@ public class Board {
 	public Board() {
 		cards = new ArrayList<Card>();
 		dice = new Dice();
+		
+		suspects = new Suspect[playerNames.length];
+		
 		for (int i = 0; i < playerNames.length; i++) {
-			cards.add(new Suspect(playerNames[i]));
+			suspects[i] = new Suspect(playerNames[i]);
+			cards.add(suspects[i]);
 		}
 
 		// initialize rooms, then add them to the cards list
