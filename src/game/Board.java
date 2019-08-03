@@ -101,7 +101,6 @@ public class Board {
 				System.out.println("Please type a valid number");
 			} catch (IllegalArgumentException e) {
 				System.out.println(e.getMessage());
-				e.printStackTrace();
 			}
 		}
 
@@ -318,21 +317,31 @@ public class Board {
 		// hide three random cards
 		hideCards();
 
+		// deck of cards to be distributed between player
+		ArrayList<Card> distribute = new ArrayList<>(cards);
+
 		// get number of cards per player
-		int cardsPerPlayer = (cards.size() - 1) / numOfPlayers;
+		int cardsPerPlayer = (int) Math.round((double) distribute.size() / numOfPlayers);
 
 		// distribute hands
 		for (int i = 0; i < numOfPlayers; i++) {
 			ArrayList<Card> currHand = new ArrayList<>();
-			for (int j = 0; j < cardsPerPlayer && cards.size() > 0; j++) {
-				if (j < cards.size()) {
-					Card card = cards.get(j);
-					currHand.add(card);
-					removeCard(card);
+			for (int j = 0; j < cardsPerPlayer; j++) {
+				if (distribute.size() > 0) {
+					// check if there are cards to distribute, and that j doesn't go out of bounds
+					if (distribute.size() > 0) {
+						// get the top card from the deck
+						Card card = distribute.get(0);
+						// add the card to the current hand
+						currHand.add(card);
+						removeCard(card);
+						// remove the card from the deck
+						distribute.remove(card);
+					}
 				}
 			}
 
-			// add the current hand to the list of hands
+			// add current hand to the hands list
 			hands.add(currHand);
 		}
 	}
