@@ -33,9 +33,9 @@ public class Board {
 	public Board() {
 		cards = new ArrayList<Card>();
 		dice = new Dice();
-		
+
 		suspects = new Suspect[playerNames.length];
-		
+
 		for (int i = 0; i < playerNames.length; i++) {
 			suspects[i] = new Suspect(playerNames[i]);
 			cards.add(suspects[i]);
@@ -114,7 +114,7 @@ public class Board {
 
 	private void activeRound() {
 
-		int highestRoller=0;
+		int highestRoller = 0;
 		highestRoller = findWhoGoesFirst(); // players roll the dice to see who goes first
 		currentPlayer = players.get(highestRoller);// assign the currentPlayer field as the player @ index of highest
 													// roller (player to start)
@@ -127,7 +127,7 @@ public class Board {
 					i = highestRoller;
 					highestRoller = 0;
 				}
-				currentPlayer=players.get(i);
+				currentPlayer = players.get(i);
 				int roll = playerRollDice();
 				activeMove(roll);
 
@@ -146,31 +146,32 @@ public class Board {
 
 			String r;
 			r = sc.next();
-			if (r.equalsIgnoreCase("w")&&currentPlayer.isValid(-1,0)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()-1,currentPlayer.getPositon().getX()+0); rollCount--;
-			}
-			else if (r.equalsIgnoreCase("d")&&currentPlayer.isValid(0,2)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()+0,currentPlayer.getPositon().getX()+2); rollCount--;
-			}
-			else if (r.equalsIgnoreCase("s")&&currentPlayer.isValid(1,0)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()+1,currentPlayer.getPositon().getX()+0); rollCount--;
-			}
-			else if (r.equalsIgnoreCase("a")&&currentPlayer.isValid(0,-2)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY()+0,currentPlayer.getPositon().getX()+-2); rollCount--;
+			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
+				rollCount--;
+			} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
+				rollCount--;
+			} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
+				rollCount--;
+			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
+				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
+				rollCount--;
 			}
 
 			else {
 				formatPrint("incorrect input or location, try again");
 				continue;
 			}
-			
+
 		}
 	}
 
 	public int playerRollDice() {
 		Dice die = new Dice();
-		int diceRoll=0;
-		
+		int diceRoll = 0;
+
 		while (true) {
 			Scanner sc = new Scanner(System.in);
 
@@ -182,8 +183,6 @@ public class Board {
 			if (r.equalsIgnoreCase("r")) {
 				diceRoll = die.roll();
 				break;
-				
-				
 
 			} else {
 				formatPrint("remember, press r to roll die. try again");
@@ -279,7 +278,7 @@ public class Board {
 		}
 
 		hiddenCards.add(c);
-		removeCard(c);
+		cards.remove(c);
 
 		// hide one random room
 		while (!(c instanceof Room)) {
@@ -288,7 +287,7 @@ public class Board {
 		}
 
 		hiddenCards.add(c);
-		removeCard(c);
+		cards.remove(c);
 
 		// hide one random weapon
 		while (!(c instanceof Weapon)) {
@@ -297,30 +296,35 @@ public class Board {
 		}
 
 		hiddenCards.add(c);
-		removeCard(c);
+		cards.remove(c);
 	}
 
 	private void distributeCards(int numOfPlayers) {
-		// shuffle cards
-		Collections.shuffle(cards);
-
 		// hide three random cards
 		hideCards();
 
+		// deck of cards to be distributed between player
+		ArrayList<Card> distribute = new ArrayList<>(cards);
+
 		// get number of cards per player
-		int cardsPerPlayer = (cards.size() - 1) / numOfPlayers;
+		int cardsPerPlayer = (int) Math.round((double) distribute.size() / numOfPlayers);
 
 		// distribute hands
 		for (int i = 0; i < numOfPlayers; i++) {
 			ArrayList<Card> currHand = new ArrayList<>();
-			for (int j = 0; j < cardsPerPlayer && cards.size() > 0; j++) {
-				if (j < cards.size()) {
-					Card card = cards.get(j);
+			for (int j = 0; j < cardsPerPlayer; j++) {
+				// check if there are cards to distribute, and that j doesn't go out of bounds
+				if (distribute.size() > 0) {
+					// get the top card from the deck
+					Card card = distribute.get(0);
+					// add the card to the current hand
 					currHand.add(card);
-					removeCard(card);
+					// remove the card from the deck
+					distribute.remove(card);
 				}
 			}
-
+			
+			// add the current hand to the list of hands
 			hands.add(currHand);
 		}
 	}
@@ -349,12 +353,6 @@ public class Board {
 		boolean wasAdded = false;
 		wasAdded = cards.add(aCard);
 		return wasAdded;
-	}
-
-	private boolean removeCard(Card aCard) {
-		boolean wasRemoved = false;
-		wasRemoved = cards.remove(aCard);
-		return wasRemoved;
 	}
 
 	public Room getRoom(int index) {
