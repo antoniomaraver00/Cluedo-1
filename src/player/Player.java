@@ -69,6 +69,7 @@ public class Player {
 	}
 	
 	
+	
 	public char getBoardChar() {return boardName;}// get the board name of player, e.g; Mr. Green = G.
 
 	public String getName() {
