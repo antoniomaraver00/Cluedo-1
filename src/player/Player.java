@@ -10,6 +10,9 @@ public class Player {
 	private Position position;
 	private Move move;
 	private ArrayList<Card> cards;
+	private ArrayList<Card> excludedCards = new ArrayList<>();
+	private Scanner scan = new Scanner(System.in);
+	private int SUGGESTION = 1, ACCUSATION = 2;
 
 	public Player(String name, Position position, ArrayList<Card> cards) {
 		this.name = name;
@@ -18,32 +21,32 @@ public class Player {
 		this.boardName=generateBoardName();
 		this.move = new Move();
 	}
-	private char generateBoardName(){
-		char correctChar='x';
+
+	private char generateBoardName() {
+		char correctChar = 'x';
 		switch (name) {
-		case "Miss Scarlett" :
-			correctChar='S';
+		case "Miss Scarlett":
+			correctChar = 'S';
 			break;
-		case "Colonel Mustard" :
-			correctChar='M';
+		case "Colonel Mustard":
+			correctChar = 'M';
 			break;
-		case "Mrs. White" :
-			correctChar='W';
+		case "Mrs. White":
+			correctChar = 'W';
 			break;
-		case "Mr. Green" :
-			correctChar='G';
+		case "Mr. Green":
+			correctChar = 'G';
 			break;
-		case "Mrs. Peacock" :
-			correctChar='p';
+		case "Mrs. Peacock":
+			correctChar = 'p';
 			break;
-		case "Professor Plum" :
-			correctChar='P';
+		case "Professor Plum":
+			correctChar = 'P';
 			break;
-			
+
 		}
 		return correctChar;
-	}
-	
+	}	
 	
 	public void playerMove(int newY,int newX) {
 		//need to check if move is valid (todo)
@@ -51,7 +54,6 @@ public class Player {
 		move.apply(position,newY, newX,boardName);
 		
 	}
-	
 	
 	public void spawnMove(int row, int col) {
 		position.setY(row);
@@ -68,6 +70,7 @@ public class Player {
 	
 	
 	public char getBoardChar() {return boardName;}// get the board name of player, e.g; Mr. Green = G.
+
 	public String getName() {
 		return name;
 	}
@@ -76,6 +79,35 @@ public class Player {
 	}
 	public Position getPositon() {
 		return position;
+	}
+
+	private void acusationOrSuggestion(ArrayList<Card> cards) {
+		int choice = -1;
+
+		while (choice != SUGGESTION && choice != ACCUSATION) {
+			System.out.println("Make a chioce:");
+			System.out.println("1- Suggestion\n" + "2- Accusation");
+
+			try {
+				choice = scan.nextInt();
+			} catch (Exception e) {
+				System.out.println("Please enter a valid number");
+			}
+		}
+		
+		chooseCards(cards, choice);
+	}
+	
+	private void chooseCards(ArrayList<Card> cards, int choice) {
+		int cardNum = 1;
+		
+		for(int i = 0; i < cards.size(); i++) {
+			if(!excludedCards.contains(cards.get(i))) {
+				System.out.println(cardNum++ + "- " + cards.get(i));
+			}
+		}
+		
+		int card = scan.nextInt();
 	}
 
 	public Card getCard(int index) {
@@ -131,7 +163,7 @@ public class Player {
 		wasSet = true;
 		return wasSet;
 	}
-	
+
 	public String toString() {
 		return getName() + " : " + getPositon();
 	}
