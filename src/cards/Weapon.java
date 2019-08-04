@@ -7,11 +7,6 @@ public class Weapon implements Card {
 		this.name = name;
 	}
 
-	@Override
-	public Card reveal() {
-		return this;
-	}
-
 	public String getName() {
 		return name;
 	}

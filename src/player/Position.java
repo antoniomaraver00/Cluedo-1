@@ -32,8 +32,6 @@ public class Position {
 		return y;
 	}
 	
-	public void delete() {
-	}
 	public void translateToBoard() {//EDIT
 		
 	}

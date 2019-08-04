@@ -2,12 +2,9 @@ package game;
 
 import java.util.*;
 
-import cards.Card;
-import cards.Room;
-import cards.Suspect;
-import cards.Weapon;
-import player.Player;
-import player.Position;
+import cards.*;
+import player.*;
+import rooms.*;
 
 public class Board {
 
@@ -15,7 +12,8 @@ public class Board {
 	private Player currentPlayer;
 	private Dice dice;
 	private Suspect[] suspects;
-	private Room[] rooms;
+	private Room[] rooms = { new Study(), new Hall(), new Lounge(), new DiningRoom(), new Kitchen(), new Ballaroom(),
+			new Conservatory(), new BilliardRoom(), new Library() };
 	private Weapon[] weapons;
 	private ArrayList<Card> hiddenCards = new ArrayList<>(); // cards to be guessed
 	private ArrayList<Card> cards = new ArrayList<>();
@@ -40,13 +38,9 @@ public class Board {
 			suspects[i] = new Suspect(playerNames[i]);
 			cards.add(suspects[i]);
 		}
-
-		// initialize rooms, then add them to the cards list
-		rooms = new Room[9];
-
-		for (int i = 0; i < rooms.length; i++) {
-			rooms[i] = new Room(roomNames[i]);
-			addCard(rooms[i]);
+		
+		for(Room r : rooms) {
+			cards.add(r);
 		}
 
 		// initialize weapons, then add them to the cards list
@@ -138,7 +132,7 @@ public class Board {
 		while (rollCount > 0) {
 			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
 			players.get(0).getMove().getGrid().display();// display grid
-			
+
 			Scanner sc = new Scanner(System.in);
 			formatPrint("enter move key");
 
@@ -157,12 +151,12 @@ public class Board {
 			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
 				rollCount--;
-				
 
 			}
-			if (getRoom(currentPlayer)!="NOT IN ROOM") {
-				System.out.println(getRoom(currentPlayer));
-			}//proccess player if they enter room
+			Room currentRoom = getRoom(currentPlayer);
+			if (currentRoom != null) {
+				
+			} // proccess player if they enter room
 		}
 	}
 
@@ -221,21 +215,25 @@ public class Board {
 		}
 		return 0;
 	}
-	
-	public String getRoom(Player p) {
+
+	// RoomDimensions[] rDimensions = {new RoomDimensions(new Position(3, 1), 9, 4),
+	// new RoomDimensions(new Position(21, 1), 27, 4),
+	// new RoomDimensions(new Position(39, 1), 45, 4), new RoomDimensions(new
+	// Position(39, 8), 45, 10),
+	// new RoomDimensions(new Position(39, 8), 45, 10), new RoomDimensions(new
+	// Position(3, 1), 9, 4)};
+
+	public Room getRoom(Player p) {
+
+		// players x,y boundaries determines room player is in, if player is in a room
+		// at all
+		for (Room r : rooms) {
+			if (r.within(p.getPositon())) {
+				return r;
+			}
+		}
 		
-		//players x,y boundaries determines room player is in, if player is in a room at all
-		if ((p.getPositon().getX()>=3 && p.getPositon().getX()<=9)&&(p.getPositon().getY()>=1 && p.getPositon().getY()<=4)) {return"Study";}
-		if ((p.getPositon().getX()>=21 && p.getPositon().getX()<=27)&&(p.getPositon().getY()>=1 && p.getPositon().getY()<=4)) {return"Hall";}
-		if ((p.getPositon().getX()>=39 && p.getPositon().getX()<=45)&&(p.getPositon().getY()>=1 && p.getPositon().getY()<=4)) {return"Lounge";}
-		if ((p.getPositon().getX()>=39 && p.getPositon().getX()<=45)&&(p.getPositon().getY()>=8 && p.getPositon().getY()<=10)) {return"Dining Room";}
-		if ((p.getPositon().getX()>=39 && p.getPositon().getX()<=45)&&(p.getPositon().getY()>=14 && p.getPositon().getY()<=16)) {return"Kitchen";}
-		if ((p.getPositon().getX()>=39 && p.getPositon().getX()<=45)&&(p.getPositon().getY()>=20 && p.getPositon().getY()<=23)) {return"Ballroom";}
-		if ((p.getPositon().getX()>=21 && p.getPositon().getX()<=27)&&(p.getPositon().getY()>=20 && p.getPositon().getY()<=23)) {return"Conservatory";}
-		if ((p.getPositon().getX()>=3 && p.getPositon().getX()<=9)&&(p.getPositon().getY()>=20 && p.getPositon().getY()<=23)) {return"Billiard Room";}
-		if ((p.getPositon().getX()>=3 && p.getPositon().getX()<=9)&&(p.getPositon().getY()>=11 && p.getPositon().getY()<=14)) {return"Library";}
-		return"NOT IN ROOM";
-		
+		return null;
 	}
 
 	public void formatPrint(String s) {

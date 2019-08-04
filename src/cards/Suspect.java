@@ -10,10 +10,4 @@ public class Suspect implements Card {
 	public String getName() {
 		return this.name;
 	}
-
-	@Override
-	public Card reveal() {
-		return this;
-	}
-
 }
