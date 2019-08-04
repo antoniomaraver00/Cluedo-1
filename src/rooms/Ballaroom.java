@@ -16,6 +16,12 @@ public class Ballaroom implements Room {
 	}
 	
 	public String toString() {
-		return "Ballaroom";
+		return "BallRoom";
+	}
+
+	@Override
+	public boolean equals(Card c) {
+		if (this.toString()==c.toString()) {return true;}
+		return false;
 	}
 }

@@ -7,7 +7,8 @@ import player.*;
 import rooms.*;
 
 public class Board {
-
+	
+	private boolean gameOver=false;
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Player currentPlayer;
 	private Dice dice;
@@ -99,7 +100,7 @@ public class Board {
 		}
 
 		spawnPlayers();// allocate player spawn positions
-
+		showPlayerHands();//show players their hands to write down
 		players.get(0).getMove().getGrid().display();
 		activeRound();// Begin the round
 	}
@@ -110,7 +111,7 @@ public class Board {
 		currentPlayer = players.get(highestRoller);// assign the currentPlayer field as the player @ index of highest
 													// roller (player to start)
 
-		while (true) {
+		while (!gameOver) {
 
 			for (int i = 0; i < players.size(); i++) {
 				if (highestRoller != 0) {// offset the index to have the player who rolled the highest initial roll go
@@ -119,8 +120,11 @@ public class Board {
 					highestRoller = 0;
 				}
 				currentPlayer = players.get(i);
-				int roll = playerRollDice();
-				activeMove(roll);
+				if (currentPlayer.getStillInGame()) {
+					int roll = playerRollDice();
+					activeMove(roll);
+				}
+				
 
 			}
 		}
@@ -131,6 +135,7 @@ public class Board {
 		int rollCount = roll;
 		while (rollCount > 0) {
 			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
+			System.out.println("enter: 'show hand (player icon)' , to show players hand, e.g; show hand M , shows mustards hand. case matters!");
 			players.get(0).getMove().getGrid().display();// display grid
 
 			Scanner sc = new Scanner(System.in);
@@ -139,6 +144,9 @@ public class Board {
 
 			String r;
 			r = sc.next();
+			
+					
+			
 
 			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
@@ -153,27 +161,38 @@ public class Board {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
 				rollCount--;
 
-			}
-			// check if the player is in a room after their turn is over
+			}// check if the player is in a room after their turn is over
 			else {formatPrint("incorrect input or move location, try again");}
+			
+			
+			
+			
+											
 			
 			Room currentRoom = getRoom(currentPlayer);
 			if (currentRoom != null) {
 				// notify the player which room they are in
-				System.out.println("You are inside the " + currentRoom.toString());
+				formatPrint("You are inside the " + currentRoom.toString());
 
 				// check if player wants to make a suggestion, or an accusation
 				int playerChoice = currentPlayer.acusationOrSuggestion();
 				// get the cards the player has chosen
 				Card[] chosenCards = currentPlayer.chooseCards(currentRoom, weapons, suspects);
-
+				for (Card c : chosenCards) {formatPrint(c.toString()+"TEST TEST");}///////TESTING**TESTING///////////////////////
 				// if the player made an accusation
 				if (playerChoice == currentPlayer.accusation()) {
+					int cardFound = 0;
 					for (int i = 0; i < 3; i++) {
-						if (!hiddenCards.contains(chosenCards[i])) {
-
+						for (int j = 0; j<chosenCards.length; j++) {
+							if (hiddenCards.get(i).equals(chosenCards[j])) {cardFound++;}
 						}
+					
 					}
+					if (cardFound==3) {
+						formatPrint("+++++++++++++++++++ GAME OVER "+currentPlayer.getName()+" wins!! +++++++++++++++++++");
+						gameOver=true;
+					}
+					else {currentPlayer.removeFromGame();}
 					// if the player made a suggestion, check if other players have one of the cards
 					// the player has chosen
 				} else if (playerChoice == currentPlayer.suggestion()) {
@@ -183,9 +202,9 @@ public class Board {
 								// check if the current other player has the current card
 								Card revealedCard = p.getCard(chosenCards[i]);
 
-								if (revealedCard != null) {
+								if (revealedCard != null && !currentPlayer.getExcludedCards().contains(revealedCard)) {
 									// notify the player of who has the card they are looking for
-									System.out.println(p.getName() + " has a " + chosenCards[i] + " card");
+									formatPrint(p.getName() + " has a " + chosenCards[i] + " card");
 
 									// if they do, add it to currentPlayer's exclude list, so it won't appear on the
 									// player's next turn
@@ -289,7 +308,21 @@ public class Board {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////// board setup ///////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	private void showPlayerHands() {
+		for (int i = 0; i < players.size(); i++) {
+			formatPrint("showing "+players.get(i).getName()+"'s hand, type c to continue...");
+			Scanner sc = new Scanner(System.in);
+			if (sc.next().equalsIgnoreCase("c")) {
+				for (Card c : players.get(i).getCards()) {
+					formatPrint(c.toString());
+				}
+			}else {
+				formatPrint("press c to continue..");
+				i--;
+			}
+		}
+		
+	}
 	private void spawnPlayers() {
 		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };// possible x,y spawn positions in subsequent
 																			// order (row,col,row..)

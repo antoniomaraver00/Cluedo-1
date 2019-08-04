@@ -12,6 +12,7 @@ public class Player {
 	private String name;
 	private char boardName;
 	private Position position;
+	private boolean playerAlive = true;
 	private Move move;
 	private ArrayList<Card> cards;
 	private ArrayList<Card> excludedCards = new ArrayList<>();
@@ -68,7 +69,9 @@ public class Player {
 	public boolean isValid(int row, int col) {
 		return move.isMoveValid(position.getY() + row, position.getX() + col);
 	}
-
+	public ArrayList<Card> getExcludedCards(){ 
+		return excludedCards;
+	} 
 	public char getBoardChar() {
 		return boardName;
 	}// get the board name of player, e.g; Mr. Green = G.
@@ -190,6 +193,12 @@ public class Player {
 		// return the list as an array
 		return s.toArray(new Suspect[s.size()]);
 	}
+	public boolean getStillInGame() {
+		return playerAlive;
+	}
+	public void removeFromGame() {
+		playerAlive=false;
+	}
 
 	public Card getCard(Card c) {
 		int cardIndex = cards.indexOf(c);
@@ -214,8 +223,8 @@ public class Player {
 	}
 
 	public ArrayList<Card> getCards() {
-		ArrayList<Card> newCards = (ArrayList<Card>) Collections.unmodifiableList(cards);
-		return newCards;
+		//ArrayList<Card> newCards = (ArrayList<Card>) Collections.unmodifiableList(cards);
+		return cards;
 	}
 
 	public int numberOfCards() {

@@ -1,5 +1,6 @@
 package rooms;
 
+import cards.Card;
 import cards.Room;
 import player.Position;
 
@@ -16,5 +17,10 @@ public class Hall implements Room {
 	
 	public String toString() {
 		return "Hall";
+	}
+	@Override
+	public boolean equals(Card c) {
+		if (this.toString()==c.toString()) {return true;}
+		return false;
 	}
 }

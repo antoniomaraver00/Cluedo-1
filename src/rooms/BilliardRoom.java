@@ -1,5 +1,6 @@
 package rooms;
 
+import cards.Card;
 import cards.Room;
 import player.Position;
 
@@ -14,7 +15,13 @@ public class BilliardRoom implements Room {
 		return (p.getX() >= x && p.getX() <= width) && (p.getY() >= y && p.getY() <= height);
 	}
 	
+	
 	public String toString() {
 		return "Billiard Room";
+	}
+	@Override
+	public boolean equals(Card c) {
+		if (this.toString()==c.toString()) {return true;}
+		return false;
 	}
 }

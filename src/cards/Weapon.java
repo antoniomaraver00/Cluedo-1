@@ -14,4 +14,9 @@ public class Weapon implements Card {
 	public String toString() {
 		return this.getName();
 	}
+	@Override
+	public boolean equals(Card c) {
+		if (this.toString()==c.toString()) {return true;}
+		return false;
+	}
 }
