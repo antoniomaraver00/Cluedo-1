@@ -134,6 +134,7 @@ public class Board {
 			players.get(0).getMove().getGrid().display();// display grid
 
 			Scanner sc = new Scanner(System.in);
+			formatPrint("roll of "+roll+". "+rollCount+" moves remaining");
 			formatPrint("enter move key");
 
 			String r;
@@ -154,6 +155,8 @@ public class Board {
 
 			}
 			// check if the player is in a room after their turn is over
+			else {formatPrint("incorrect input or move location, try again");}
+			
 			Room currentRoom = getRoom(currentPlayer);
 			if (currentRoom != null) {
 				// notify the player which room they are in

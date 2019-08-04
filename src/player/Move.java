@@ -21,6 +21,7 @@ public class Move {
 		boardGrid.setGridChar(row, col, boardChar);
 	}
 	public boolean isMoveValid(int row, int col) {//if the desired coord is occupied by a underscore, its okay to move there
+		if (row<0 || row>24 || col<3 || col>48) {return false;}
 		if (boardGrid.getGridChar(row, col)=='_') {return true;}
 		return false;
 	}
