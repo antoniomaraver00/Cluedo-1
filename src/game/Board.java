@@ -134,6 +134,7 @@ public class Board {
 			players.get(0).getMove().getGrid().display();// display grid
 
 			Scanner sc = new Scanner(System.in);
+			formatPrint("roll of "+roll+". "+rollCount+" moves remaining");
 			formatPrint("enter move key");
 
 			String r;
@@ -153,6 +154,7 @@ public class Board {
 				rollCount--;
 
 			}
+			else {formatPrint("incorrect input or move location, try again");}
 			Room currentRoom = getRoom(currentPlayer);
 			if (currentRoom != null) {
 				

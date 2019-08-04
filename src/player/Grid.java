@@ -62,12 +62,20 @@ public class Grid {
 	  
 	
 	public void setGridChar(int oldRow, int oldCol, int newRow, int newCol, char playerIcon) {
-		// todo code to check if the move is valid(desired location is unoccupied, valid cell, within dice number range)		                                                                                
-		 mainGrid[oldRow][oldCol] ='_';
+		// todo code to check if the move is valid(desired location is unoccupied, valid cell, within dice number range)
+		if (isAtSpawn(oldRow,oldCol)) {mainGrid[oldRow][oldCol] ='#';}//if the players are leaving spawn, their spawn spot is no longer reachable
+		else{mainGrid[oldRow][oldCol] ='_';}
 		 mainGrid[newRow][newCol] =playerIcon;		 
 	}
 	public void setGridChar(int newRow, int newCol, char playerIcon) {//set new pos without changing old position				                                                                                 		 
 		 mainGrid[newRow][newCol] =playerIcon;	 
+	}
+	public boolean isAtSpawn(int row,int col) {
+		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };
+		for (int i = 0; i < spawnPos.length; i++) {
+			if (row==spawnPos[i]&&col==spawnPos[i+1]) {return true;}
+		}
+		return false;
 	}
 
 }// end
