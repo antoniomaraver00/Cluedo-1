@@ -8,6 +8,10 @@ public class Weapon implements Card {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
+	}
+	
+	public String toString() {
+		return this.getName();
 	}
 }

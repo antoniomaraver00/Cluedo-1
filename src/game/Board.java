@@ -38,8 +38,8 @@ public class Board {
 			suspects[i] = new Suspect(playerNames[i]);
 			cards.add(suspects[i]);
 		}
-		
-		for(Room r : rooms) {
+
+		for (Room r : rooms) {
 			cards.add(r);
 		}
 
@@ -153,9 +153,51 @@ public class Board {
 				rollCount--;
 
 			}
+			// check if the player is in a room after their turn is over
 			Room currentRoom = getRoom(currentPlayer);
 			if (currentRoom != null) {
-				
+				// notify the player which room they are in
+				System.out.println("You are inside the " + currentRoom.toString());
+
+				// check if player wants to make a suggestion, or an accusation
+				int playerChoice = currentPlayer.acusationOrSuggestion();
+				// get the cards the player has chosen
+				Card[] chosenCards = currentPlayer.chooseCards(currentRoom, weapons, suspects);
+
+				// if the player made an accusation
+				if (playerChoice == currentPlayer.accusation()) {
+					for (int i = 0; i < 3; i++) {
+						if (!hiddenCards.contains(chosenCards[i])) {
+
+						}
+					}
+					// if the player made a suggestion, check if other players have one of the cards
+					// the player has chosen
+				} else if (playerChoice == currentPlayer.suggestion()) {
+					for (int i = 0; i < 3; i++) {
+						for (Player p : players) {
+							if (p != currentPlayer) {
+								// check if the current other player has the current card
+								Card revealedCard = p.getCard(chosenCards[i]);
+
+								if (revealedCard != null) {
+									// notify the player of who has the card they are looking for
+									System.out.println(p.getName() + " has a " + chosenCards[i] + " card");
+
+									// if they do, add it to currentPlayer's exclude list, so it won't appear on the
+									// player's next turn
+									currentPlayer.excludeCard(revealedCard);
+									sc.reset();
+									return;
+								}
+							}
+						}
+					}
+
+					// if none of the players have any of the suggested cards, then notify the
+					// current player
+					System.out.println("none of the players have any of the cards you suggested");
+				}
 			} // proccess player if they enter room
 		}
 	}
@@ -182,7 +224,6 @@ public class Board {
 
 		}
 		return diceRoll;
-
 	}
 
 	public int findWhoGoesFirst() {
@@ -232,7 +273,7 @@ public class Board {
 				return r;
 			}
 		}
-		
+
 		return null;
 	}
 

@@ -10,4 +10,8 @@ public class Suspect implements Card {
 	public String getName() {
 		return this.name;
 	}
+	
+	public String toString() {
+		return this.getName();
+	}
 }
