@@ -134,8 +134,6 @@ public class Board {
 		int rollCount = roll;
 		while (rollCount > 0) {
 			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
-			System.out.println(
-					"enter: 'show hand (player icon)' , to show players hand, e.g; show hand M , shows mustards hand. case matters!");
 			players.get(0).getMove().getGrid().display();// display grid
 
 			Scanner sc = new Scanner(System.in);
@@ -147,16 +145,20 @@ public class Board {
 
 			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
-				rollCount--;
+				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
+				else{rollCount--;}
 			} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
-				rollCount--;
+				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
+				else{rollCount--;}
 			} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
-				rollCount--;
+				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
+				else{rollCount--;}
 			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
-				rollCount--;
+				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
+				else{rollCount--;}
 
 			} // check if the player is in a room after their turn is over
 			else {
@@ -164,8 +166,11 @@ public class Board {
 			}
 
 			Room currentRoom = getRoom(currentPlayer);
+			
 			if (currentRoom != null) {
+				rollCount=0;//player cannot move more steps once in room
 				// notify the player which room they are in
+				currentPlayer.setPreviousRoom(currentRoom);
 				formatPrint("You are inside the " + currentRoom.toString());
 
 				// check if player wants to make a suggestion, or an accusation

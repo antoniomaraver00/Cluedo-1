@@ -7,6 +7,7 @@ import cards.Card;
 import cards.Room;
 import cards.Suspect;
 import cards.Weapon;
+import game.Board;
 
 public class Player {
 	private String name;
@@ -14,6 +15,7 @@ public class Player {
 	private Position position;
 	private boolean playerAlive = true;
 	private Move move;
+	private Room previousRoom;
 	private ArrayList<Card> cards;
 	private ArrayList<Card> excludedCards = new ArrayList<>();
 	private Scanner scan = new Scanner(System.in);
@@ -69,11 +71,9 @@ public class Player {
 	public boolean isValid(int row, int col) {
 		return move.isMoveValid(position.getY() + row, position.getX() + col);
 	}
-
-	public ArrayList<Card> getExcludedCards() {
+	public ArrayList<Card> getExcludedCards(){ 
 		return excludedCards;
-	}
-
+	} 
 	public char getBoardChar() {
 		return boardName;
 	}// get the board name of player, e.g; Mr. Green = G.
@@ -128,7 +128,7 @@ public class Player {
 		// remove elements that will cannot be chosen by this player
 		weapons = removeWeapons(weapons);
 		suspects = removeSuspects(suspects);
-
+		
 		// first ask the player to choose a weapon
 		System.out.println("Choose a weapon:");
 
@@ -139,57 +139,19 @@ public class Player {
 		}
 
 		// get the weapon of choice
-		int choice = -1;
-
-		// make sure that the player enters a valid input
-		while (choice < 0 || choice > weapons.length) {
-			try {
-				choice = scan.nextInt();
-
-				if (choice < 0 || choice > weapons.length) {
-					throw new IllegalArgumentException();
-				}
-
-			} catch (Exception e) {
-				System.out.println("Please enter a valid number");
-				scan.reset();
-			}
-		}
-
-		Weapon murderWeapon = weapons[choice - 1];
+		Weapon murderWeapon = weapons[scan.nextInt() - 1];
 		scan.reset();
 
 		for (int i = 0; i < suspects.length; i++) {
 			// check if the suspect is not in the player's deck, or hasn't been revealed to
 			// them by another player in a previous turn
-			System.out.println(i + 1 + "- " + suspects[i].toString());
-		}
-
-		choice = -1;
-
-		// make sure that the player enters a valid input
-		while (choice < 0 || choice > weapons.length) {
-			try {
-				choice = scan.nextInt();
-
-				if (choice < 0 || choice > weapons.length) {
-					throw new IllegalArgumentException();
-				}
-
-			} catch (Exception e) {
-				System.out.println("Please enter a valid number");
-				scan.reset();
-			}
+				System.out.println(i + 1 + "- " + suspects[i].toString());
 		}
 
 		// get the suspect of choice
-		Suspect murderSuspect = suspects[choice - 1];
+		Suspect murderSuspect = suspects[scan.nextInt() - 1];
 
-		// check if the room card wasn't already revealed before
-		if (!excludedCards.contains(room)) {
-			return new Card[] { murderWeapon, murderSuspect };
-		}
-
+		scan.reset();
 		// return the cards to the board so it can decide on what to do next
 		return new Card[] { room, murderWeapon, murderSuspect };
 	}
@@ -213,7 +175,7 @@ public class Player {
 		// return the list as an array
 		return w.toArray(new Weapon[w.size()]);
 	}
-
+	
 	/*
 	 * removes an element form an array if it cannot be chosen for
 	 * suggestion/accusation
@@ -233,13 +195,17 @@ public class Player {
 		// return the list as an array
 		return s.toArray(new Suspect[s.size()]);
 	}
-
+	public Room getPreviousRoom() {
+		return previousRoom;
+	}
+	public void setPreviousRoom(Room r) {
+		previousRoom=r;
+	}
 	public boolean getStillInGame() {
 		return playerAlive;
 	}
-
 	public void removeFromGame() {
-		playerAlive = false;
+		playerAlive=false;
 	}
 
 	public Card getCard(Card c) {
@@ -265,8 +231,7 @@ public class Player {
 	}
 
 	public ArrayList<Card> getCards() {
-		// ArrayList<Card> newCards = (ArrayList<Card>)
-		// Collections.unmodifiableList(cards);
+		//ArrayList<Card> newCards = (ArrayList<Card>) Collections.unmodifiableList(cards);
 		return cards;
 	}
 
