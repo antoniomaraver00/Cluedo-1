@@ -280,6 +280,6 @@ public class Player {
 	}
 
 	public String toString() {
-		return getName() + " : " + getPositon();
+		return getName();
 	}
 }

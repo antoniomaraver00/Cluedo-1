@@ -114,7 +114,9 @@ public class Board {
 		while (!gameOver) {
 
 			for (int i = 0; i < players.size(); i++) {
-				if (gameOver) {break;}//break if the game is over mid round
+				if (gameOver) {
+					break;
+				} // break if the game is over mid round
 				if (highestRoller != 0) {// offset the index to have the player who rolled the highest initial roll go
 											// first
 					i = highestRoller;
@@ -129,9 +131,13 @@ public class Board {
 			}
 		}
 		players.get(0).getMove().getGrid().display();
-		for (Player p : players) {if (p.getStillInGame()) {formatPrint("+++++++++++++++++++ GAME OVER " + p.getName()+ " wins!! +++++++++++++++++++");}}
-
+		for (Player p : players) {
+			if (p.getStillInGame()) {
+				formatPrint("+++++++++++++++++++ GAME OVER " + p.getName() + " wins!! +++++++++++++++++++");
 			}
+		}
+
+	}
 //////////////////////////////////////////////////	
 
 	public void activeMove(int roll) {
@@ -146,24 +152,41 @@ public class Board {
 
 			String r;
 			r = sc.next();
-			//keystrokes map to x,y coords
-			//if player already in room, moves dont count towards diceroll, nor can they make suggestions or accusations untill re-entering room
+			// keystrokes map to x,y coords
+			// if player already in room, moves dont count towards diceroll, nor can they
+			// make suggestions or accusations untill re-entering room
 			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
-				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
-				else{rollCount--;}
+				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
+						&& currentPlayer.getPreviousRoom() != null) {
+					continue;
+				} else {
+					rollCount--;
+				}
 			} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
-				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
-				else{rollCount--;}
+				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
+						&& currentPlayer.getPreviousRoom() != null) {
+					continue;
+				} else {
+					rollCount--;
+				}
 			} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
-				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
-				else{rollCount--;}
+				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
+						&& currentPlayer.getPreviousRoom() != null) {
+					continue;
+				} else {
+					rollCount--;
+				}
 			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
-				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
-				else{rollCount--;}
+				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
+						&& currentPlayer.getPreviousRoom() != null) {
+					continue;
+				} else {
+					rollCount--;
+				}
 
 			} // check if the player is in a room after their turn is over
 			else {
@@ -171,9 +194,9 @@ public class Board {
 			}
 
 			Room currentRoom = getRoom(currentPlayer);
-			
+
 			if (currentRoom != null) {
-				rollCount=0;//player cannot move more steps once in room
+				rollCount = 0;// player cannot move more steps once in room
 				// notify the player which room they are in
 				currentPlayer.setPreviousRoom(currentRoom);
 				formatPrint("You are inside the " + currentRoom.toString());
@@ -188,7 +211,7 @@ public class Board {
 				if (playerChoice == currentPlayer.accusation()) {
 					int cardFound = 0;
 					for (int i = 0; i < 3; i++) {
-						
+
 						for (int j = 0; j < chosenCards.length; j++) {
 							if (hiddenCards.get(i).equals(chosenCards[j])) {
 								cardFound++;
@@ -197,17 +220,26 @@ public class Board {
 
 					}
 					if (cardFound == 3) {
-					
+
 						gameOver = true;
 					} else {
 						// notify the player that they have been eliminated
 						formatPrint(currentPlayer.getName() + " has been eliminated");
 						currentPlayer.removeFromGame();
-						//change eliminated players board piece to a moveable area
-						currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(), currentPlayer.getPositon().getX(),'_');
-						
-						if(allPlayersEliminated()) {
-							gameOver = true;
+						// change eliminated players board piece to a moveable area
+						currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(),
+								currentPlayer.getPositon().getX(), '_');
+
+						// check if there is at most one player remaining in the game
+						if (allPlayersEliminated()) {
+							for (Player p : players) {
+								if (p.getStillInGame()) {
+									formatPrint("+++++++++++++++++++ GAME OVER " + p.getName()
+											+ " wins!! +++++++++++++++++++");
+									gameOver = true;
+									break;
+								}
+							}
 						}
 					}
 					// if the player made a suggestion, check if other players have one of the cards
@@ -237,7 +269,9 @@ public class Board {
 					System.out.println("none of the players have any of the cards you suggested");
 				}
 			} // proccess player if they enter room
-			else{currentPlayer.setPreviousRoom(null);}//if player is not in a room, have previous room set to null
+			else {
+				currentPlayer.setPreviousRoom(null);
+			} // if player is not in a room, have previous room set to null
 		}
 	}
 
@@ -315,13 +349,6 @@ public class Board {
 		}
 		return 0;
 	}
-
-	// RoomDimensions[] rDimensions = {new RoomDimensions(new Position(3, 1), 9, 4),
-	// new RoomDimensions(new Position(21, 1), 27, 4),
-	// new RoomDimensions(new Position(39, 1), 45, 4), new RoomDimensions(new
-	// Position(39, 8), 45, 10),
-	// new RoomDimensions(new Position(39, 8), 45, 10), new RoomDimensions(new
-	// Position(3, 1), 9, 4)};
 
 	public Room getRoom(Player p) {
 
@@ -434,8 +461,6 @@ public class Board {
 
 		// deck of cards to be distributed between player
 		ArrayList<Card> distribute = new ArrayList<>(cards);
-
-		System.out.println(distribute.toString());
 
 		// get number of cards per player
 		int cardsPerPlayer = (int) Math.round((double) distribute.size() / numOfPlayers);
