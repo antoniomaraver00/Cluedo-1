@@ -130,6 +130,7 @@ public class Board {
 
 			}
 		}
+
 		players.get(0).getMove().getGrid().display();
 		for (Player p : players) {
 			if (p.getStillInGame()) {
@@ -138,7 +139,6 @@ public class Board {
 		}
 
 	}
-//////////////////////////////////////////////////	
 
 	public void activeMove(int roll) {
 		int rollCount = roll;
@@ -220,7 +220,8 @@ public class Board {
 
 					}
 					if (cardFound == 3) {
-
+						formatPrint("+++++++++++++++++++ GAME OVER " + currentPlayer.getName()
+								+ " wins!! +++++++++++++++++++");
 						gameOver = true;
 					} else {
 						// notify the player that they have been eliminated
