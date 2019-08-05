@@ -184,6 +184,7 @@ public class Board {
 				if (playerChoice == currentPlayer.accusation()) {
 					int cardFound = 0;
 					for (int i = 0; i < 3; i++) {
+						
 						for (int j = 0; j < chosenCards.length; j++) {
 							if (hiddenCards.get(i).equals(chosenCards[j])) {
 								cardFound++;
@@ -233,6 +234,7 @@ public class Board {
 					System.out.println("none of the players have any of the cards you suggested");
 				}
 			} // proccess player if they enter room
+			else{currentPlayer.setPreviousRoom(null);}//if player is not in a room, have previous room set to null
 		}
 	}
 
