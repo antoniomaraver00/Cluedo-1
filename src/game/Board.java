@@ -142,7 +142,8 @@ public class Board {
 
 			String r;
 			r = sc.next();
-
+			//keystrokes map to x,y coords
+			//if player already in room, moves dont count towards diceroll, nor can they make suggestions or accusations untill re-entering room
 			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
 				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
 				if (currentPlayer.getPreviousRoom()==getRoom(currentPlayer)&&currentPlayer.getPreviousRoom()!=null) {continue;}
