@@ -197,8 +197,10 @@ public class Board {
 						gameOver = true;
 					} else {
 						// notify the player that they have been eliminated
-						formatPrint(currentPlayer + " has been eliminated");
+						formatPrint(currentPlayer.getName() + " has been eliminated");
 						currentPlayer.removeFromGame();
+						//change eliminated players board piece to a moveable area
+						currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(), currentPlayer.getPositon().getX(),'_');
 						
 						if(allPlayersEliminated()) {
 							gameOver = true;
