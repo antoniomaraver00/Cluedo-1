@@ -114,6 +114,7 @@ public class Board {
 		while (!gameOver) {
 
 			for (int i = 0; i < players.size(); i++) {
+				if (gameOver) {break;}//break if the game is over mid round
 				if (highestRoller != 0) {// offset the index to have the player who rolled the highest initial roll go
 											// first
 					i = highestRoller;
@@ -127,7 +128,10 @@ public class Board {
 
 			}
 		}
-	}
+		players.get(0).getMove().getGrid().display();
+		for (Player p : players) {if (p.getStillInGame()) {formatPrint("+++++++++++++++++++ GAME OVER " + p.getName()+ " wins!! +++++++++++++++++++");}}
+
+			}
 //////////////////////////////////////////////////	
 
 	public void activeMove(int roll) {
@@ -193,8 +197,7 @@ public class Board {
 
 					}
 					if (cardFound == 3) {
-						formatPrint("+++++++++++++++++++ GAME OVER " + currentPlayer.getName()
-								+ " wins!! +++++++++++++++++++");
+					
 						gameOver = true;
 					} else {
 						// notify the player that they have been eliminated
