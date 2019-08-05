@@ -139,7 +139,24 @@ public class Player {
 		}
 
 		// get the weapon of choice
-		Weapon murderWeapon = weapons[scan.nextInt() - 1];
+		int choice = -1;
+
+		// make sure that the player enters a valid input
+		while (choice < 0 || choice > weapons.length) {
+			try {
+				choice = scan.nextInt();
+
+				if (choice < 0 || choice > weapons.length) {
+					throw new IllegalArgumentException();
+				}
+
+			} catch (Exception e) {
+				System.out.println("Please enter a valid number");
+				scan.reset();
+			}
+		}
+
+		Weapon murderWeapon = weapons[choice - 1];
 		scan.reset();
 
 		for (int i = 0; i < suspects.length; i++) {
@@ -148,8 +165,25 @@ public class Player {
 			System.out.println(i + 1 + "- " + suspects[i].toString());
 		}
 
+		choice = -1;
+
+		// make sure that the player enters a valid input
+		while (choice < 0 || choice > weapons.length) {
+			try {
+				choice = scan.nextInt();
+
+				if (choice < 0 || choice > weapons.length) {
+					throw new IllegalArgumentException();
+				}
+
+			} catch (Exception e) {
+				System.out.println("Please enter a valid number");
+				scan.reset();
+			}
+		}
+
 		// get the suspect of choice
-		Suspect murderSuspect = suspects[scan.nextInt() - 1];
+		Suspect murderSuspect = suspects[choice - 1];
 
 		// check if the room card wasn't already revealed before
 		if (!excludedCards.contains(room)) {

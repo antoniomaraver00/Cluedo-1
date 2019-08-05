@@ -170,6 +170,7 @@ public class Board {
 
 				// check if player wants to make a suggestion, or an accusation
 				int playerChoice = currentPlayer.acusationOrSuggestion();
+
 				// get the cards the player has chosen
 				Card[] chosenCards = currentPlayer.chooseCards(currentRoom, weapons, suspects);
 
@@ -192,13 +193,17 @@ public class Board {
 						// notify the player that they have been eliminated
 						formatPrint(currentPlayer + " has been eliminated");
 						currentPlayer.removeFromGame();
+						
+						if(allPlayersEliminated()) {
+							gameOver = true;
+						}
 					}
 					// if the player made a suggestion, check if other players have one of the cards
 					// the player has chosen
 				} else if (playerChoice == currentPlayer.suggestion()) {
 					for (int i = 0; i < chosenCards.length; i++) {
 						for (Player p : players) {
-							if (p != currentPlayer) {
+							if (p != currentPlayer && p.getStillInGame()) {
 								// check if the current other player has the current card
 								Card revealedCard = p.getCard(chosenCards[i]);
 
@@ -221,6 +226,26 @@ public class Board {
 				}
 			} // proccess player if they enter room
 		}
+	}
+
+	/*
+	 * check if there is at most one active player
+	 */
+	private boolean allPlayersEliminated() {
+		// the number of active players
+		int playerCount = 0;
+
+		for (Player p : players) {
+			if (p.getStillInGame()) {
+				playerCount++;
+			}
+		}
+
+		if (playerCount > 1) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public int playerRollDice() {
