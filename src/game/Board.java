@@ -123,9 +123,8 @@ public class Board {
 				currentPlayer = players.get(i);
 				if (currentPlayer.getStillInGame()) {
 					int roll = playerRollDice();
-					activeMove(roll);
+					System.out.println(activeMove(roll));
 				}
-
 			}
 		}
 
@@ -138,7 +137,7 @@ public class Board {
 
 	}
 
-	public void activeMove(int roll) {
+	public String activeMove(int roll) {
 		int rollCount = roll;
 		Scanner sc = new Scanner(System.in);
 		while (rollCount > 0) {
@@ -217,13 +216,13 @@ public class Board {
 						}
 					}
 					if (cardFound == 3) {
-						formatPrint("+++++++++++++++++++ GAME OVER " + currentPlayer.getName()
-								+ " wins!! +++++++++++++++++++");
 						gameOver = true;
+						return ("+++++++++++++++++++ GAME OVER " + currentPlayer.getName()
+						+ " wins!! +++++++++++++++++++");
 					} else {
 						// notify the player that they have been eliminated
-						formatPrint(currentPlayer.getName() + " has been eliminated");
 						currentPlayer.removeFromGame();
+						
 						// change eliminated players board piece to a moveable area
 						currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(),
 								currentPlayer.getPositon().getX(), '_');
@@ -232,13 +231,14 @@ public class Board {
 						if (allPlayersEliminated()) {
 							for (Player p : players) {
 								if (p.getStillInGame()) {
-									formatPrint("+++++++++++++++++++ GAME OVER " + p.getName()
-											+ " wins!! +++++++++++++++++++");
 									gameOver = true;
-									break;
+									return ("+++++++++++++++++++ GAME OVER " + p.getName()
+									+ " wins!! +++++++++++++++++++");
 								}
 							}
 						}
+						
+						return (currentPlayer.getName() + " has been eliminated");
 					}
 					// if the player made a suggestion, check if other players have one of the cards
 					// the player has chosen
@@ -251,12 +251,12 @@ public class Board {
 
 								if (revealedCard != null && !currentPlayer.getExcludedCards().contains(revealedCard)) {
 									// notify the player of who has the card they are looking for
-									formatPrint(p.getName() + " has a " + chosenCards[i] + " card");
+									formatPrint(p.getName() + " has the card " + chosenCards[i]);
 
 									// if they do, add it to currentPlayer's exclude list, so it won't appear on the
 									// player's next turn
 									currentPlayer.excludeCard(revealedCard);
-									return;
+									return "";
 								}
 							}
 						}
@@ -264,13 +264,15 @@ public class Board {
 
 					// if none of the players have any of the suggested cards, then notify the
 					// current player
-					System.out.println("none of the players have any of the cards you suggested");
+					return ("none of the players have any of the cards you suggested");
 				}
 			} // proccess player if they enter room
 			else {
 				currentPlayer.setPreviousRoom(null);
 			} // if player is not in a room, have previous room set to null
 		}
+		
+		return "";
 	}
 
 	/*
@@ -452,10 +454,11 @@ public class Board {
 	}
 
 	public void distributeCards(int numOfPlayers) {
+		// shuffle the cards
+		Collections.shuffle(cards);
+
 		// hide three random cards
 		hideCards();
-
-		Collections.shuffle(cards);
 
 		// deck of cards to be distributed between player
 		ArrayList<Card> distribute = new ArrayList<>(cards);
