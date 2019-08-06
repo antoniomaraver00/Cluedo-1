@@ -1,14 +1,11 @@
 package player;
 
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import cards.Card;
 import cards.Room;
 import cards.Suspect;
 import cards.Weapon;
-import game.Board;
 
 public class Player {
 	private String name;
@@ -71,9 +68,11 @@ public class Player {
 	public boolean isValid(int row, int col) {
 		return move.isMoveValid(position.getY() + row, position.getX() + col);
 	}
-	public ArrayList<Card> getExcludedCards(){ 
+
+	public ArrayList<Card> getExcludedCards() {
 		return excludedCards;
-	} 
+	}
+
 	public char getBoardChar() {
 		return boardName;
 	}// get the board name of player, e.g; Mr. Green = G.
@@ -95,8 +94,8 @@ public class Player {
 	 */
 
 	public int acusationOrSuggestion(Scanner scan) {
-		//Scanner scan = new Scanner(is);
-		
+		// Scanner scan = new Scanner(is);
+
 		// assume the player's choice is invalid
 		int choice = -1;
 
@@ -130,7 +129,7 @@ public class Player {
 		// remove elements that will cannot be chosen by this player
 		weapons = removeWeapons(weapons);
 		suspects = removeSuspects(suspects);
-		
+
 		// first ask the player to choose a weapon
 		System.out.println("Choose a weapon:");
 
@@ -147,7 +146,7 @@ public class Player {
 		for (int i = 0; i < suspects.length; i++) {
 			// check if the suspect is not in the player's deck, or hasn't been revealed to
 			// them by another player in a previous turn
-				System.out.println(i + 1 + "- " + suspects[i].toString());
+			System.out.println(i + 1 + "- " + suspects[i].toString());
 		}
 
 		// get the suspect of choice
@@ -176,7 +175,7 @@ public class Player {
 		// return the list as an array
 		return w.toArray(new Weapon[w.size()]);
 	}
-	
+
 	/*
 	 * removes an element form an array if it cannot be chosen for
 	 * suggestion/accusation
@@ -196,17 +195,21 @@ public class Player {
 		// return the list as an array
 		return s.toArray(new Suspect[s.size()]);
 	}
+
 	public Room getPreviousRoom() {
 		return previousRoom;
 	}
+
 	public void setPreviousRoom(Room r) {
-		previousRoom=r;
+		previousRoom = r;
 	}
+
 	public boolean getStillInGame() {
 		return playerAlive;
 	}
+
 	public void removeFromGame() {
-		playerAlive=false;
+		playerAlive = false;
 	}
 
 	public Card getCard(Card c) {
@@ -232,7 +235,8 @@ public class Player {
 	}
 
 	public ArrayList<Card> getCards() {
-		//ArrayList<Card> newCards = (ArrayList<Card>) Collections.unmodifiableList(cards);
+		// ArrayList<Card> newCards = (ArrayList<Card>)
+		// Collections.unmodifiableList(cards);
 		return cards;
 	}
 
@@ -279,7 +283,7 @@ public class Player {
 		wasSet = true;
 		return wasSet;
 	}
-	
+
 	public ArrayList<Card> getHand() {
 		return cards;
 	}

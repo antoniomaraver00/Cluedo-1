@@ -1,6 +1,5 @@
 package game;
 
-import java.io.InputStream;
 import java.util.*;
 
 import cards.*;
@@ -12,7 +11,6 @@ public class Board {
 	private boolean gameOver = false;
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Player currentPlayer;
-	private Dice dice;
 	private Suspect[] suspects;
 	private Room[] rooms = { new Study(), new Hall(), new Lounge(), new DiningRoom(), new Kitchen(), new Ballaroom(),
 			new Conservatory(), new BilliardRoom(), new Library() };
@@ -29,7 +27,6 @@ public class Board {
 
 	public Board() {
 		cards = new ArrayList<Card>();
-		dice = new Dice();
 
 		suspects = new Suspect[playerNames.length];
 

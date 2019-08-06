@@ -190,7 +190,7 @@ class testPart1 {
 				result == "none of the players have any of the cards you suggested" || result.contains("has the card"));
 
 		// check if Miss Scarlett is in the right position after the suggestion
-		String excpectedGrid = "|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
+		String expectedGrid = "|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|S|_|_|_|_|#|_|_|_|_|#|_|_|_|_|_|_|_|_|#|\n"
@@ -216,7 +216,7 @@ class testPart1 {
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|#|#|#|#|#|#|+|#|#|#|#|#|#|#|#|W|#|#|#|#|#|#|#|\n";
 
-		assertEquals(excpectedGrid, board.getPlayers().get(0).getMove().getGrid().display());
+		assertEquals(expectedGrid, board.getPlayers().get(0).getMove().getGrid().display());
 	}
 
 	/*

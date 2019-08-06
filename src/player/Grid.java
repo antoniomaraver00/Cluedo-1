@@ -41,7 +41,6 @@ public class Grid {
 		for (int i = 0; i < 25; i++) {
 			for (int j = 0; j < 50; j++) {
 				mainGrid[i][j] = ss.charAt(count++);
-				System.out.println(mainGrid[i][j]);
 			}
 		}
 	}
