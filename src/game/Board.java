@@ -456,7 +456,6 @@ public class Board {
 	public void distributeCards(int numOfPlayers) {
 		// shuffle the cards
 		Collections.shuffle(cards);
-
 		// hide three random cards
 		hideCards();
 
