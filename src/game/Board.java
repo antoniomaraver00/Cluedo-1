@@ -1,5 +1,6 @@
 package game;
 
+import java.io.InputStream;
 import java.util.*;
 
 import cards.*;
@@ -23,9 +24,6 @@ public class Board {
 
 	private final String[] playerNames = { "Miss Scarlett", "Colonel Mustard", "Mrs. White", "Mr. Green",
 			"Mrs. Peacock", "Professor Plum" };
-
-	private final String[] roomNames = { "Study", "Hall", "Lounge", "Dining Room", "Kitchen", "Ballroom",
-			"Conservatory", "Billiard Room", "Library" };
 
 	private final String[] weaponNames = { "Dagger", "Lead Pipe", "Spanner", "Candlestick", "Revolver", "Rope" };
 
@@ -101,7 +99,7 @@ public class Board {
 
 		spawnPlayers();// allocate player spawn positions
 		showPlayerHands();// show players their hands to write down
-		players.get(0).getMove().getGrid().display();
+		System.out.println(players.get(0).getMove().getGrid().display());
 		activeRound();// Begin the round
 	}
 //////////////////////game starts////////////////
@@ -131,7 +129,7 @@ public class Board {
 			}
 		}
 
-		players.get(0).getMove().getGrid().display();
+		System.out.println(players.get(0).getMove().getGrid().display());
 		for (Player p : players) {
 			if (p.getStillInGame()) {
 				formatPrint("+++++++++++++++++++ GAME OVER " + p.getName() + " wins!! +++++++++++++++++++");
@@ -142,11 +140,11 @@ public class Board {
 
 	public void activeMove(int roll) {
 		int rollCount = roll;
+		Scanner sc = new Scanner(System.in);
 		while (rollCount > 0) {
 			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
-			players.get(0).getMove().getGrid().display();// display grid
+			System.out.println(players.get(0).getMove().getGrid().display());// display grid
 
-			Scanner sc = new Scanner(System.in);
 			formatPrint("roll of " + roll + ". " + rollCount + " moves remaining");
 			formatPrint("enter move key");
 
@@ -202,10 +200,10 @@ public class Board {
 				formatPrint("You are inside the " + currentRoom.toString());
 
 				// check if player wants to make a suggestion, or an accusation
-				int playerChoice = currentPlayer.acusationOrSuggestion();
+				int playerChoice = currentPlayer.acusationOrSuggestion(sc);
 
 				// get the cards the player has chosen
-				Card[] chosenCards = currentPlayer.chooseCards(currentRoom, weapons, suspects);
+				Card[] chosenCards = currentPlayer.chooseCards(sc, currentRoom, weapons, suspects);
 
 				// if the player made an accusation
 				if (playerChoice == currentPlayer.accusation()) {
@@ -217,7 +215,6 @@ public class Board {
 								cardFound++;
 							}
 						}
-
 					}
 					if (cardFound == 3) {
 						formatPrint("+++++++++++++++++++ GAME OVER " + currentPlayer.getName()
@@ -389,7 +386,7 @@ public class Board {
 
 	}
 
-	private void spawnPlayers() {
+	public void spawnPlayers() {
 		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };// possible x,y spawn positions in subsequent
 																			// order (row,col,row..)
 		int count = 0;
@@ -454,7 +451,7 @@ public class Board {
 		removeCard(c);
 	}
 
-	private void distributeCards(int numOfPlayers) {
+	public void distributeCards(int numOfPlayers) {
 		// hide three random cards
 		hideCards();
 
@@ -489,7 +486,7 @@ public class Board {
 		}
 	}
 
-	private Player createPlayer(String name) {
+	public Player createPlayer(String name) {
 		return new Player(name, new Position(0, 0), getRandomHand());
 	}
 
@@ -509,6 +506,14 @@ public class Board {
 		return players;
 	}
 
+	public void addPlayer(Player p) {
+		players.add(p);
+	}
+
+	public void setCurrentPlayer(Player p) {
+		currentPlayer = p;
+	}
+
 	private boolean addCard(Card aCard) {
 		boolean wasAdded = false;
 		wasAdded = cards.add(aCard);
@@ -521,12 +526,20 @@ public class Board {
 		return wasRemoved;
 	}
 
+	public ArrayList<Card> getHiddenCards() {
+		return hiddenCards;
+	}
+
 	public Room getRoom(int index) {
 		return rooms[index];
 	}
 
 	public Room[] getRooms() {
 		return rooms;
+	}
+
+	public void setCards(ArrayList<Card> newCards) {
+		cards = newCards;
 	}
 
 	public Card getCard(int index) {

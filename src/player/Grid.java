@@ -5,7 +5,6 @@ public class Grid {
 	private char[][] mainGrid = new char[25][50];// 2d array of the entire board grid
 	
 
-	public Grid() {
 		parseGrid();
 	}
 
@@ -50,14 +49,17 @@ public class Grid {
 		return mainGrid[row][col];
 	}
 
-	public void display() {// display the current board
+	public String display() {// display the current board
+		String grid = "";
 		
 		for (int i = 0; i < 25; i++) {
 			for (int j = 0; j < 49; j++) {
-				System.out.print(mainGrid[i][j]);
+				grid += mainGrid[i][j];
 			}
-			System.out.print('\n');
+			grid += "\n";
 		}
+		
+		return grid;
 	}
 	  
 	
