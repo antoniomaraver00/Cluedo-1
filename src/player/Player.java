@@ -1,5 +1,6 @@
 package player;
 
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -18,7 +19,6 @@ public class Player {
 	private Room previousRoom;
 	private ArrayList<Card> cards;
 	private ArrayList<Card> excludedCards = new ArrayList<>();
-	private Scanner scan = new Scanner(System.in);
 	private int SUGGESTION = 1, ACCUSATION = 2;
 
 	public Player(String name, Position position, ArrayList<Card> cards) {
@@ -94,7 +94,9 @@ public class Player {
 	 * asks the player if they want to make a suggestion, or an accusation
 	 */
 
-	public int acusationOrSuggestion() {
+	public int acusationOrSuggestion(Scanner scan) {
+		//Scanner scan = new Scanner(is);
+		
 		// assume the player's choice is invalid
 		int choice = -1;
 
@@ -105,6 +107,7 @@ public class Player {
 
 			try {
 				choice = scan.nextInt();
+				System.out.println(choice);
 
 				if (choice != SUGGESTION && choice != ACCUSATION) {
 					throw new IllegalArgumentException();
@@ -116,7 +119,6 @@ public class Player {
 			}
 		}
 
-		scan.reset();
 		// return the choice so the board can decide what to do next
 		return choice;
 	}
@@ -124,7 +126,7 @@ public class Player {
 	/*
 	 * asks the player to suggest, or accuse cards
 	 */
-	public Card[] chooseCards(Room room, Weapon[] weapons, Suspect[] suspects) {
+	public Card[] chooseCards(Scanner scan, Room room, Weapon[] weapons, Suspect[] suspects) {
 		// remove elements that will cannot be chosen by this player
 		weapons = removeWeapons(weapons);
 		suspects = removeSuspects(suspects);
@@ -151,7 +153,6 @@ public class Player {
 		// get the suspect of choice
 		Suspect murderSuspect = suspects[scan.nextInt() - 1];
 
-		scan.reset();
 		// return the cards to the board so it can decide on what to do next
 		return new Card[] { room, murderWeapon, murderSuspect };
 	}
@@ -277,6 +278,10 @@ public class Player {
 		cards.addAll(verifiedCards);
 		wasSet = true;
 		return wasSet;
+	}
+	
+	public ArrayList<Card> getHand() {
+		return cards;
 	}
 
 	public String toString() {
