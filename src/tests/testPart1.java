@@ -11,6 +11,12 @@ import cards.*;
 import game.*;
 import player.Player;
 import rooms.*;
+import weapons.CandleStick;
+import weapons.Dagger;
+import weapons.LeadPipe;
+import weapons.Revolver;
+import weapons.Rope;
+import weapons.Spanner;
 
 class testPart1 {
 
@@ -20,7 +26,7 @@ class testPart1 {
 	private final String[] playerNames = { "Miss Scarlett", "Colonel Mustard", "Mrs. White", "Mr. Green",
 			"Mrs. Peacock", "Professor Plum" };
 
-	private final String[] weaponNames = { "Dagger", "Lead Pipe", "Spanner", "Candlestick", "Revolver", "Rope" };
+	private Weapon[] weapons = {new Dagger(), new LeadPipe(), new Revolver(), new Spanner(), new CandleStick(), new Rope()};
 
 	/*
 	 * test the number of hidden cards, and their types
@@ -243,8 +249,8 @@ class testPart1 {
 			cards.add(new Suspect(playerNames[i]));
 		}
 
-		for (int i = 0; i < weaponNames.length; i++) {
-			cards.add(new Weapon(weaponNames[i]));
+		for (int i = 0; i < weapons.length; i++) {
+			cards.add(weapons[i]);
 		}
 
 		for (int i = 0; i < rooms.length; i++) {

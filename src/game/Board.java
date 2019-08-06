@@ -5,6 +5,7 @@ import java.util.*;
 import cards.*;
 import player.*;
 import rooms.*;
+import weapons.*;
 
 public class Board {
 
@@ -14,7 +15,7 @@ public class Board {
 	private Suspect[] suspects;
 	private Room[] rooms = { new Study(), new Hall(), new Lounge(), new DiningRoom(), new Kitchen(), new Ballaroom(),
 			new Conservatory(), new BilliardRoom(), new Library() };
-	private Weapon[] weapons;
+	private Weapon[] weapons = {new Dagger(), new LeadPipe(), new Revolver(), new Spanner(), new CandleStick(), new Rope()};
 	private ArrayList<Card> hiddenCards = new ArrayList<>(); // cards to be guessed
 	private ArrayList<Card> cards = new ArrayList<>();
 	private ArrayList<ArrayList<Card>> hands = new ArrayList<>(); // hands of shuffled cards distributed randomly
@@ -22,8 +23,6 @@ public class Board {
 
 	private final String[] playerNames = { "Miss Scarlett", "Colonel Mustard", "Mrs. White", "Mr. Green",
 			"Mrs. Peacock", "Professor Plum" };
-
-	private final String[] weaponNames = { "Dagger", "Lead Pipe", "Spanner", "Candlestick", "Revolver", "Rope" };
 
 	public Board() {
 		cards = new ArrayList<Card>();
@@ -34,17 +33,13 @@ public class Board {
 			suspects[i] = new Suspect(playerNames[i]);
 			cards.add(suspects[i]);
 		}
+		
+		for(Weapon w : weapons) {
+			cards.add(w);
+		}
 
 		for (Room r : rooms) {
 			cards.add(r);
-		}
-
-		// initialize weapons, then add them to the cards list
-		weapons = new Weapon[6];
-
-		for (int i = 0; i < weapons.length; i++) {
-			weapons[i] = new Weapon(weaponNames[i]);
-			addCard(weapons[i]);
 		}
 	}
 
