@@ -8,61 +8,33 @@ import cards.Suspect;
 import cards.Weapon;
 
 public class Player {
-	private String name;
-	private char boardName;
 	private Position position;
 	private boolean playerAlive = true;
 	private Move move;
-	private Room previousRoom;
+	private Room previousRoom, currentRoom;
 	private ArrayList<Card> cards;
 	private ArrayList<Card> excludedCards = new ArrayList<>();
 	private int SUGGESTION = 1, ACCUSATION = 2;
 
-	public Player(String name, Position position, ArrayList<Card> cards) {
-		this.name = name;
-		this.position = position;
+	public Player(ArrayList<Card> cards) {
 		this.cards = cards;
-		this.boardName = generateBoardName();
+		position = new Position(0, 0);
 		this.move = new Move();
 	}
-
-	private char generateBoardName() {
-		char correctChar = 'x';
-		switch (name) {
-		case "Miss Scarlett":
-			correctChar = 'S';
-			break;
-		case "Colonel Mustard":
-			correctChar = 'M';
-			break;
-		case "Mrs. White":
-			correctChar = 'W';
-			break;
-		case "Mr. Green":
-			correctChar = 'G';
-			break;
-		case "Mrs. Peacock":
-			correctChar = 'p';
-			break;
-		case "Professor Plum":
-			correctChar = 'P';
-			break;
-
-		}
-		return correctChar;
+	
+	public char getBoardName() {
+		return 'A';
 	}
 
 	public void playerMove(int newY, int newX) {
 		// need to check if move is valid (todo)
-
-		move.apply(position, newY, newX, boardName);
-
+		move.apply(position, newY, newX, this.getBoardName());
 	}
 
 	public void spawnMove(int row, int col) {
 		position.setY(row);
 		position.setX(col);
-		move.moveSpawnPos(row, col, boardName);
+		move.moveSpawnPos(row, col, this.getBoardName());
 	}
 
 	public boolean isValid(int row, int col) {
@@ -71,14 +43,6 @@ public class Player {
 
 	public ArrayList<Card> getExcludedCards() {
 		return excludedCards;
-	}
-
-	public char getBoardChar() {
-		return boardName;
-	}// get the board name of player, e.g; Mr. Green = G.
-
-	public String getName() {
-		return name;
 	}
 
 	public Move getMove() {
@@ -90,70 +54,15 @@ public class Player {
 	}
 
 	/*
-	 * asks the player if they want to make a suggestion, or an accusation
-	 */
-
-	public int acusationOrSuggestion(Scanner scan) {
-		// Scanner scan = new Scanner(is);
-
-		// assume the player's choice is invalid
-		int choice = -1;
-
-		// keep looping until the player makes a valid choice
-		while (choice != SUGGESTION && choice != ACCUSATION) {
-			System.out.println("Make a chioce:");
-			System.out.println("1- Suggestion\n" + "2- Accusation");
-
-			try {
-				choice = scan.nextInt();
-				System.out.println(choice);
-
-				if (choice != SUGGESTION && choice != ACCUSATION) {
-					throw new IllegalArgumentException();
-				}
-
-			} catch (IllegalArgumentException e) {
-				System.out.println("Please enter a valid number");
-				scan.reset();
-			}
-		}
-
-		// return the choice so the board can decide what to do next
-		return choice;
-	}
-
-	/*
 	 * asks the player to suggest, or accuse cards
 	 */
-	public Card[] chooseCards(Scanner scan, Room room, Weapon[] weapons, Suspect[] suspects) {
+	public Card[][] chooseCards(Room room, Weapon[] weapons, Suspect[] suspects) {
 		// remove elements that will cannot be chosen by this player
 		weapons = removeWeapons(weapons);
 		suspects = removeSuspects(suspects);
 
-		// first ask the player to choose a weapon
-		System.out.println("Choose a weapon:");
-
-		for (int i = 0; i < weapons.length; i++) {
-			// check if the weapon is not in the player's deck, or hasn't been revealed to
-			// them by another player in a previous turn
-			System.out.println(i + 1 + "- " + weapons[i].toString());
-		}
-
-		// get the weapon of choice
-		Weapon murderWeapon = weapons[scan.nextInt() - 1];
-		scan.reset();
-
-		for (int i = 0; i < suspects.length; i++) {
-			// check if the suspect is not in the player's deck, or hasn't been revealed to
-			// them by another player in a previous turn
-			System.out.println(i + 1 + "- " + suspects[i].toString());
-		}
-
-		// get the suspect of choice
-		Suspect murderSuspect = suspects[scan.nextInt() - 1];
-
 		// return the cards to the board so it can decide on what to do next
-		return new Card[] { room, murderWeapon, murderSuspect };
+		return new Card[][] { weapons, suspects };
 	}
 
 	/*
@@ -196,8 +105,16 @@ public class Player {
 		return s.toArray(new Suspect[s.size()]);
 	}
 
+	public Room getCurrentRoom() {
+		return currentRoom;
+	}
+	
 	public Room getPreviousRoom() {
 		return previousRoom;
+	}
+	
+	public void setCurrentRoom(Room r) {
+		currentRoom = r;
 	}
 
 	public void setPreviousRoom(Room r) {
@@ -234,12 +151,6 @@ public class Player {
 		return ACCUSATION;
 	}
 
-	public ArrayList<Card> getCards() {
-		// ArrayList<Card> newCards = (ArrayList<Card>)
-		// Collections.unmodifiableList(cards);
-		return cards;
-	}
-
 	public int numberOfCards() {
 		int number = cards.size();
 		return number;
@@ -264,31 +175,11 @@ public class Player {
 		return wasSet;
 	}
 
-	public boolean setCards(Card... newCards) {
-		boolean wasSet = false;
-		ArrayList<Card> verifiedCards = new ArrayList<Card>();
-		for (Card aCard : newCards) {
-			if (verifiedCards.contains(aCard)) {
-				continue;
-			}
-			verifiedCards.add(aCard);
-		}
-
-		if (verifiedCards.size() != newCards.length || verifiedCards.size() != 6) {
-			return wasSet;
-		}
-
-		cards.clear();
-		cards.addAll(verifiedCards);
-		wasSet = true;
-		return wasSet;
+	public void setCards(ArrayList<Card> newCards) {
+		this.cards = newCards;
 	}
 
 	public ArrayList<Card> getHand() {
 		return cards;
-	}
-
-	public String toString() {
-		return getName();
 	}
 }

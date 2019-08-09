@@ -4,6 +4,7 @@ import java.util.*;
 
 import cards.*;
 import player.*;
+import players.*;
 import rooms.*;
 import weapons.*;
 
@@ -15,26 +16,27 @@ public class Board {
 	private Suspect[] suspects;
 	private Room[] rooms = { new Study(), new Hall(), new Lounge(), new DiningRoom(), new Kitchen(), new Ballaroom(),
 			new Conservatory(), new BilliardRoom(), new Library() };
-	private Weapon[] weapons = {new Dagger(), new LeadPipe(), new Revolver(), new Spanner(), new CandleStick(), new Rope()};
+	private Weapon[] weapons = { new Dagger(), new LeadPipe(), new Revolver(), new Spanner(), new CandleStick(),
+			new Rope() };
 	private ArrayList<Card> hiddenCards = new ArrayList<>(); // cards to be guessed
 	private ArrayList<Card> cards = new ArrayList<>();
 	private ArrayList<ArrayList<Card>> hands = new ArrayList<>(); // hands of shuffled cards distributed randomly
 																	// between players
 
-	private final String[] playerNames = { "Miss Scarlett", "Colonel Mustard", "Mrs. White", "Mr. Green",
-			"Mrs. Peacock", "Professor Plum" };
+	private final Player[] allPlayers = { new MissScarlett(null), new ColonelMustard(null), new MrsWhite(null),
+			new MrGreen(null), new MrsPeacock(null), new ProfessorPlum(null) };
 
 	public Board() {
 		cards = new ArrayList<Card>();
 
-		suspects = new Suspect[playerNames.length];
+		suspects = new Suspect[allPlayers.length];
 
-		for (int i = 0; i < playerNames.length; i++) {
-			suspects[i] = new Suspect(playerNames[i]);
+		for (int i = 0; i < allPlayers.length; i++) {
+			suspects[i] = new Suspect(allPlayers[i].toString());
 			cards.add(suspects[i]);
 		}
-		
-		for(Weapon w : weapons) {
+
+		for (Weapon w : weapons) {
 			cards.add(w);
 		}
 
@@ -43,44 +45,15 @@ public class Board {
 		}
 	}
 
-	public void setup() {
-		Scanner scn = new Scanner(System.in);
+	public void distributeCards(int numOfPlayers) {
 		while (true) {
 			try {
-				// get the number of players
-				System.out.println("How many players are going to play?");
-				int numOfPlayers = scn.nextInt();
-				scn.reset();
-
 				if (numOfPlayers > 6 || numOfPlayers < 3) {
 					throw new IllegalArgumentException("invalid number of characters");
 				}
 
 				// distribute cards between players
-				distributeCards(numOfPlayers);
-
-				String[] unavailablePlayers = new String[numOfPlayers];
-
-				// initialize player objects
-				for (int i = 0; i < numOfPlayers; i++) {
-					// ask player to choose a character
-					System.out.println("Player " + (i + 1) + " Choose a character: ");
-					String[] p = availablePlayers(unavailablePlayers, playerNames.length - i);
-
-					// print list of available characters
-					printArray(p);
-					int index = scn.nextInt();
-
-					// add the chosen character to the unavailablePlayers array, so it can be
-					// excluded in the next iteration
-					String playerName = p[index - 1];
-					unavailablePlayers[i] = playerName;
-
-					// add a new player object to the list of players
-					Player player = createPlayer(playerName);
-					players.add(player);
-				}
-
+				shuffleHands(numOfPlayers);
 				break;
 			} catch (ArrayIndexOutOfBoundsException e) {
 				System.out.println("Please type a valid number");
@@ -88,183 +61,106 @@ public class Board {
 				System.out.println(e.getMessage());
 			}
 		}
-
-		spawnPlayers();// allocate player spawn positions
-		showPlayerHands();// show players their hands to write down
-		System.out.println(players.get(0).getMove().getGrid().display());
-		activeRound();// Begin the round
 	}
+
 //////////////////////game starts////////////////
+	public int activeMove(String r, int roll) {
 
-	private void activeRound() {
-		int highestRoller = findWhoGoesFirst(); // players roll the dice to see who goes first
-		currentPlayer = players.get(highestRoller);// assign the currentPlayer field as the player @ index of highest
-													// roller (player to start)
-
-		while (!gameOver) {
-
-			for (int i = 0; i < players.size(); i++) {
-				if (gameOver) {
-					break;
-				} // break if the game is over mid round
-				if (highestRoller != 0) {// offset the index to have the player who rolled the highest initial roll go
-											// first
-					i = highestRoller;
-					highestRoller = 0;
-				}
-				currentPlayer = players.get(i);
-				if (currentPlayer.getStillInGame()) {
-					int roll = playerRollDice();
-					System.out.println(activeMove(roll));
-				}
+		// keystrokes map to x,y coords
+		// if player already in room, moves dont count towards diceroll, nor can they
+		// make suggestions or accusations untill re-entering room
+		if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
+			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
+			} else {
+				return --roll;
 			}
-		}
-
-		System.out.println(players.get(0).getMove().getGrid().display());
-		for (Player p : players) {
-			if (p.getStillInGame()) {
-				formatPrint("+++++++++++++++++++ GAME OVER " + p.getName() + " wins!! +++++++++++++++++++");
+		} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
+			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
+			} else {
+				return --roll;
 			}
-		}
+		} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
+			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
+			} else {
+				return --roll;
+			}
+		} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
+			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
+			} else {
+				return --roll;
+			}
+		} // check if the player is in a room after their turn is over
 
+		return -1;
 	}
 
-	public String activeMove(int roll) {
-		int rollCount = roll;
-		Scanner sc = new Scanner(System.in);
-		while (rollCount > 0) {
-			formatPrint("moving keys: WASD .   walk south: S   walk north: W   walk east: D   walk west: A");
-			System.out.println(players.get(0).getMove().getGrid().display());// display grid
+	public String doAccusation(Player currentPlayer, Card[] chosenCards) {
+		int cardFound = 0;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < chosenCards.length; j++) {
+				if (hiddenCards.get(i).equals(chosenCards[j])) {
+					cardFound++;
+				}
+			}
+		}
+		if (cardFound == 3) {
+			gameOver = true;
 
-			formatPrint("roll of " + roll + ". " + rollCount + " moves remaining");
-			formatPrint("enter move key");
-
-			String r;
-			r = sc.next();
-			// keystrokes map to x,y coords
-			// if player already in room, moves dont count towards diceroll, nor can they
-			// make suggestions or accusations untill re-entering room
-			if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
-				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
-						&& currentPlayer.getPreviousRoom() != null) {
-					continue;
-				} else {
-					rollCount--;
+			for (Player p : players) {
+				if (p != currentPlayer) {
+					p.removeFromGame();
 				}
-			} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
-				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
-						&& currentPlayer.getPreviousRoom() != null) {
-					continue;
-				} else {
-					rollCount--;
-				}
-			} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
-				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
-						&& currentPlayer.getPreviousRoom() != null) {
-					continue;
-				} else {
-					rollCount--;
-				}
-			} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
-				currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
-				if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer)
-						&& currentPlayer.getPreviousRoom() != null) {
-					continue;
-				} else {
-					rollCount--;
-				}
-
-			} // check if the player is in a room after their turn is over
-			else {
-				formatPrint("incorrect input or move location, try again");
 			}
 
-			Room currentRoom = getRoom(currentPlayer);
+			return "+++++++++++++++++++ GAME OVER " + currentPlayer.toString() + " wins!! +++++++++++++++++++";
+		} else {
+			// notify the player that they have been eliminated
+			currentPlayer.removeFromGame();
 
-			if (currentRoom != null) {
-				rollCount = 0;// player cannot move more steps once in room
-				// notify the player which room they are in
-				currentPlayer.setPreviousRoom(currentRoom);
-				formatPrint("You are inside the " + currentRoom.toString());
+			// change eliminated players board piece to a moveable area
+			currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(),
+					currentPlayer.getPositon().getX(), '_');
 
-				// check if player wants to make a suggestion, or an accusation
-				int playerChoice = currentPlayer.acusationOrSuggestion(sc);
-
-				// get the cards the player has chosen
-				Card[] chosenCards = currentPlayer.chooseCards(sc, currentRoom, weapons, suspects);
-
-				// if the player made an accusation
-				if (playerChoice == currentPlayer.accusation()) {
-					int cardFound = 0;
-					for (int i = 0; i < 3; i++) {
-
-						for (int j = 0; j < chosenCards.length; j++) {
-							if (hiddenCards.get(i).equals(chosenCards[j])) {
-								cardFound++;
-							}
-						}
-					}
-					if (cardFound == 3) {
+			// check if there is at most one player remaining in the game
+			if (allPlayersEliminated()) {
+				for (Player p : players) {
+					if (p.getStillInGame()) {
 						gameOver = true;
-						return ("+++++++++++++++++++ GAME OVER " + currentPlayer.getName()
-						+ " wins!! +++++++++++++++++++");
-					} else {
-						// notify the player that they have been eliminated
-						currentPlayer.removeFromGame();
-						
-						// change eliminated players board piece to a moveable area
-						currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(),
-								currentPlayer.getPositon().getX(), '_');
-
-						// check if there is at most one player remaining in the game
-						if (allPlayersEliminated()) {
-							for (Player p : players) {
-								if (p.getStillInGame()) {
-									gameOver = true;
-									return ("+++++++++++++++++++ GAME OVER " + p.getName()
-									+ " wins!! +++++++++++++++++++");
-								}
-							}
-						}
-						
-						return (currentPlayer.getName() + " has been eliminated");
+						return "+++++++++++++++++++ GAME OVER " + p.toString() + " wins!! +++++++++++++++++++";
 					}
-					// if the player made a suggestion, check if other players have one of the cards
-					// the player has chosen
-				} else if (playerChoice == currentPlayer.suggestion()) {
-					for (int i = 0; i < chosenCards.length; i++) {
-						for (Player p : players) {
-							if (p != currentPlayer && p.getStillInGame()) {
-								// check if the current other player has the current card
-								Card revealedCard = p.getCard(chosenCards[i]);
-
-								if (revealedCard != null && !currentPlayer.getExcludedCards().contains(revealedCard)) {
-									// notify the player of who has the card they are looking for
-									formatPrint(p.getName() + " has the card " + chosenCards[i]);
-
-									// if they do, add it to currentPlayer's exclude list, so it won't appear on the
-									// player's next turn
-									currentPlayer.excludeCard(revealedCard);
-									return "";
-								}
-							}
-						}
-					}
-
-					// if none of the players have any of the suggested cards, then notify the
-					// current player
-					return ("none of the players have any of the cards you suggested");
 				}
-			} // proccess player if they enter room
-			else {
-				currentPlayer.setPreviousRoom(null);
-			} // if player is not in a room, have previous room set to null
+			}
+
+			return currentPlayer.toString() + " has been eliminated";
 		}
-		
-		return "";
+	}
+
+	public String doSuggestion(Player currentPlayer, Card[] chosenCards) {
+		for (int i = 0; i < chosenCards.length; i++) {
+			for (Player p : players) {
+				if (p != currentPlayer && p.getStillInGame()) {
+					// check if the current other player has the current card
+					Card revealedCard = p.getCard(chosenCards[i]);
+
+					if (revealedCard != null && !currentPlayer.getExcludedCards().contains(revealedCard)) {
+						// if they do, add it to currentPlayer's exclude list, so it won't appear on the
+						// player's next turn
+						currentPlayer.excludeCard(revealedCard);
+
+						// notify the player of who has the card they are looking for
+						return p.toString() + " has the card " + chosenCards[i];
+					}
+				}
+			}
+		}
+
+		// if none of the players have any of the suggested cards, then notify the
+		// current player
+		return "none of the players have any of the cards you suggested";
 	}
 
 	/*
@@ -287,59 +183,9 @@ public class Board {
 		return true;
 	}
 
-	public int playerRollDice() {
+	public int rollDice() {
 		Dice die = new Dice();
-		int diceRoll = 0;
-
-		while (true) {
-			Scanner sc = new Scanner(System.in);
-
-			formatPrint(currentPlayer.getName() + "'s next to roll");
-			formatPrint("press r to roll die");
-
-			String r;
-			r = sc.next();
-			if (r.equalsIgnoreCase("r")) {
-				diceRoll = die.roll();
-				break;
-
-			} else {
-				formatPrint("remember, press r to roll die. try again");
-			}
-
-		}
-		return diceRoll;
-	}
-
-	public int findWhoGoesFirst() {
-		ArrayList<Integer> playerRolls = new ArrayList<>();
-		Dice die = new Dice();
-		formatPrint("each player role the dice to decide who goes first");
-		for (int i = 0; i < players.size(); i++) {
-			Scanner sc = new Scanner(System.in);
-
-			formatPrint(players.get(i).getName() + "'s next to roll");
-			formatPrint("press r to roll die");
-
-			String r;
-			r = sc.next();
-			if (r.equalsIgnoreCase("r")) {
-				int diceRoll = die.roll();
-				System.out.println("rolled a " + diceRoll);
-				playerRolls.add(diceRoll);
-			} else {
-				formatPrint("remember, press r to roll die. try again");
-				i--;
-			}
-
-		}
-		for (int i = 0; i < playerRolls.size(); i++) {
-			if (playerRolls.get(i) == Collections.max(playerRolls)) {
-				formatPrint(players.get(i).getName() + " rolled the highest with a roll of: " + playerRolls.get(i));
-				return i;
-			}
-		}
-		return 0;
+		return die.roll();
 	}
 
 	public Room getRoom(Player p) {
@@ -355,31 +201,13 @@ public class Board {
 		return null;
 	}
 
-	public void formatPrint(String s) {
-		System.out.println("-------------------------------------------------");
-		System.out.println(s);
-
+	public String getGrid() {
+		return players.get(0).getMove().getGrid().display();
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////// board setup ///////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private void showPlayerHands() {
-		for (int i = 0; i < players.size(); i++) {
-			formatPrint("showing " + players.get(i).getName() + "'s hand, type c to continue...");
-			Scanner sc = new Scanner(System.in);
-			if (sc.next().equalsIgnoreCase("c")) {
-				for (Card c : players.get(i).getCards()) {
-					formatPrint(c.toString());
-				}
-			} else {
-				formatPrint("press c to continue..");
-				i--;
-			}
-		}
-
-	}
-
 	public void spawnPlayers() {
 		int[] spawnPos = { 0, 15, 0, 33, 24, 33, 24, 15, 17, 1, 12, 47 };// possible x,y spawn positions in subsequent
 																			// order (row,col,row..)
@@ -391,24 +219,16 @@ public class Board {
 		}
 	}
 
-	private void printArray(String[] arr) {
-		for (int i = 0; i < arr.length; i++) {
-			System.out.println((i + 1) + "- " + arr[i]);
-		}
-	}
+	public Player[] getAvailablePlayers() {
+		ArrayList<Player> availablePlayers = new ArrayList<>();
 
-	private String[] availablePlayers(String[] unavailablePlayers, int size) {
-		String[] availablePlayers = new String[size];
-		int index = 0;
-
-		for (int i = 0; i < playerNames.length; i++) {
-			if (!Arrays.asList(unavailablePlayers).contains(playerNames[i])) {
-				availablePlayers[index] = playerNames[i];
-				index++;
+		for (int i = 0; i < allPlayers.length; i++) {
+			if (!players.contains(allPlayers[i])) {
+				availablePlayers.add(allPlayers[i]);
 			}
 		}
 
-		return availablePlayers;
+		return availablePlayers.toArray(new Player[availablePlayers.size()]);
 	}
 
 	private void hideCards() {
@@ -445,7 +265,7 @@ public class Board {
 		removeCard(c);
 	}
 
-	public void distributeCards(int numOfPlayers) {
+	private void shuffleHands(int numOfPlayers) {
 		// shuffle the cards
 		Collections.shuffle(cards);
 		// hide three random cards
@@ -478,10 +298,11 @@ public class Board {
 			// add current hand to the hands list
 			hands.add(currHand);
 		}
-	}
 
-	public Player createPlayer(String name) {
-		return new Player(name, new Position(0, 0), getRandomHand());
+		// give each player a random hand
+		for (Player p : players) {
+			p.setCards(getRandomHand());
+		}
 	}
 
 	private ArrayList<Card> getRandomHand() {
@@ -496,6 +317,10 @@ public class Board {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////// getters and setters ///////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	public boolean gameover() {
+		return gameOver;
+	}
+
 	public ArrayList<Player> getPlayers() {
 		return players;
 	}
@@ -506,6 +331,10 @@ public class Board {
 
 	public void setCurrentPlayer(Player p) {
 		currentPlayer = p;
+	}
+
+	public Player getCurrentPlayer() {
+		return currentPlayer;
 	}
 
 	private boolean addCard(Card aCard) {
@@ -530,6 +359,14 @@ public class Board {
 
 	public Room[] getRooms() {
 		return rooms;
+	}
+
+	public Weapon[] getWeapons() {
+		return weapons;
+	}
+
+	public Suspect[] getSuspects() {
+		return suspects;
 	}
 
 	public void setCards(ArrayList<Card> newCards) {
