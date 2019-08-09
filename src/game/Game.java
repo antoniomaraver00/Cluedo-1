@@ -175,7 +175,6 @@ public class Game {
 				numOfMoves = move;
 
 				Room currentRoom = board.getRoom(board.getCurrentPlayer());
-				System.out.println(currentRoom);
 
 				if (currentRoom != null) {
 					// notify the player which room they are in
@@ -190,7 +189,6 @@ public class Game {
 					board.getCurrentPlayer().setPreviousRoom(null);
 					// if player is not in a room, have previous room set to null
 				}
-
 			} else {
 				formatPrint("incorrect move");
 			}
@@ -232,12 +230,12 @@ public class Game {
 
 		ArrayList<Card> chosenCards = new ArrayList<>();
 
-		chosenCards.add(murderWeapon);
-		chosenCards.add(murderSuspect);
-
 		if (board.getCurrentPlayer().getExcludedCards().contains(currentRoom)) {
 			chosenCards.add(currentRoom);
 		}
+		
+		chosenCards.add(murderWeapon);
+		chosenCards.add(murderSuspect);
 
 		String result;
 
