@@ -63,6 +63,10 @@ public class Grid {
 
 		return grid;
 	}
+	
+	public char[][] getMainGrid() {
+		return mainGrid;
+	}
 
 	public void setGridChar(int oldRow, int oldCol, int newRow, int newCol, char playerIcon) {
 		// todo code to check if the move is valid(desired location is unoccupied, valid

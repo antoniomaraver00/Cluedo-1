@@ -1,7 +1,8 @@
-package game;
+package gui;
 
 import javax.swing.*;
 
+import game.Board;
 import player.Player;
 
 import java.awt.*;
@@ -152,7 +153,7 @@ public class GUIGame extends JFrame {
 
 		// align the button to the center of the window
 		enter.setAlignmentX(CENTER_ALIGNMENT);
-		
+
 		// add the button to the panel and update graphics
 		panel.add(enter);
 
@@ -161,6 +162,12 @@ public class GUIGame extends JFrame {
 
 	private void distributeCards() {
 		board.distributeCards(board.getPlayers().size());
+		board.spawnPlayers();
+		drawBoard();
+	}
+
+	private void drawBoard() {
+		this.add(new GUIBoard(board));
 	}
 
 	public static void main(String[] args) {

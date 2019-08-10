@@ -15,7 +15,7 @@ public class ProfessorPlum extends Player {
 
 	@Override
 	public char getBoardName() {
-		return 'G';
+		return 'P';
 	}
 	
 	@Override
