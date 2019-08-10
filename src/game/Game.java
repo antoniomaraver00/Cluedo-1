@@ -12,7 +12,7 @@ import player.Player;
 
 public class Game {
 	private Board board = new Board();
-
+	
 	private void setupGame() {
 		Scanner scn = new Scanner(System.in);
 		// get the number of players
@@ -290,6 +290,7 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
+		
 		new Game().setupGame();
 	}
 }
