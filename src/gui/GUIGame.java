@@ -35,7 +35,7 @@ public class GUIGame extends JFrame {
 		// add a menu bar to the top
 		this.addMenuBar();
 		this.setupGame();
-
+		
 		this.add(panel);
 	}
 
@@ -51,8 +51,16 @@ public class GUIGame extends JFrame {
 				System.exit(0);
 			}
 		});
-		// add the item to the menu
+		//create a restart item
+		JMenuItem restart = new JMenuItem(new AbstractAction("Restart") {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+			}
+		});
+		// add the items to the menu
 		menu.add(quit);
+		menu.add(restart);
 		// add the menu to the menu bar
 		menuBar.add(menu);
 		// set the JFrame's menu bar to the one we just created
@@ -90,6 +98,7 @@ public class GUIGame extends JFrame {
 
 			panel.add(buttons[i]);
 		}
+		
 	}
 
 	private void characterSelection(int numOfPlayers, final int currentPlayer) {
@@ -98,6 +107,7 @@ public class GUIGame extends JFrame {
 			panel.removeAll();
 			panel.updateUI();
 			distributeCards();
+			
 			return;
 		}
 
@@ -169,6 +179,8 @@ public class GUIGame extends JFrame {
 	private void drawBoard() {
 		this.add(new GUIBoard(board));
 	}
+	////////////////////start game
+
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {

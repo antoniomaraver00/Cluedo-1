@@ -9,7 +9,7 @@ import rooms.*;
 import weapons.*;
 
 public class Board {
-
+	private static Grid boardGrid;
 	private boolean gameOver = false;
 	private ArrayList<Player> players = new ArrayList<>(); // players in the current game
 	private Player currentPlayer;
@@ -28,7 +28,7 @@ public class Board {
 
 	public Board() {
 		cards = new ArrayList<Card>();
-
+		boardGrid = new Grid();
 		suspects = new Suspect[allPlayers.length];
 
 		for (int i = 0; i < allPlayers.length; i++) {
@@ -69,26 +69,26 @@ public class Board {
 		// keystrokes map to x,y coords
 		// if player already in room, moves dont count towards diceroll, nor can they
 		// make suggestions or accusations untill re-entering room
-		if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0);
+		if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0,boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0,boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
 			}
-		} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2);
+		} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2,boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2,boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
 			}
-		} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0);
+		} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0,boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0,boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
 			}
-		} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2);
+		} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2,boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2,boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
@@ -122,7 +122,7 @@ public class Board {
 			currentPlayer.removeFromGame();
 
 			// change eliminated players board piece to a moveable area
-			currentPlayer.getMove().getGrid().setGridChar(currentPlayer.getPositon().getY(),
+			boardGrid.setGridChar(currentPlayer.getPositon().getY(),
 					currentPlayer.getPositon().getX(), '_');
 
 			// check if there is at most one player remaining in the game
@@ -202,11 +202,11 @@ public class Board {
 	}
 
 	public String getGrid() {
-		return players.get(0).getMove().getGrid().display();
+		return boardGrid.display();
 	}
 	
 	public char[][] get2dGrid() {
-		return players.get(0).getMove().getGrid().getMainGrid();
+		return boardGrid.getMainGrid();
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ public class Board {
 		int count = 0;
 		for (Player p : players) {
 
-			p.spawnMove(spawnPos[count++], spawnPos[count++]);
+			p.spawnMove(spawnPos[count++], spawnPos[count++],boardGrid);
 
 		}
 	}

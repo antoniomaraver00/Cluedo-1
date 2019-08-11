@@ -26,19 +26,19 @@ public class Player {
 		return 'A';
 	}
 
-	public void playerMove(int newY, int newX) {
+	public void playerMove(int newY, int newX,Grid g) {//move a player to a position on the board
 		// need to check if move is valid (todo)
-		move.apply(position, newY, newX, this.getBoardName());
+		move.apply(position, newY, newX, this.getBoardName(),g);
 	}
 
-	public void spawnMove(int row, int col) {
+	public void spawnMove(int row, int col,Grid g) {
 		position.setY(row);
 		position.setX(col);
-		move.moveSpawnPos(row, col, this.getBoardName());
+		move.moveSpawnPos(row, col, this.getBoardName(), g);
 	}
 
-	public boolean isValid(int row, int col) {
-		return move.isMoveValid(position.getY() + row, position.getX() + col);
+	public boolean isValid(int row, int col,Grid g) {
+		return move.isMoveValid(position.getY() + row, position.getX() + col, g);
 	}
 
 	public ArrayList<Card> getExcludedCards() {
@@ -180,6 +180,7 @@ public class Player {
 	}
 
 	public ArrayList<Card> getHand() {
+		
 		return cards;
 	}
 }
