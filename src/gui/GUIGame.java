@@ -10,10 +10,13 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class GUIGame extends JFrame {
-	JPanel panel = new JPanel();
-	Board board = new Board();
-	Dimension screenSize;
-	int width, height;
+	private JPanel panel = new JPanel();
+	private Board board = new Board();
+	private GUIBoard guiBoard = new GUIBoard(board);
+	private Dimension screenSize;
+	private int width, height;
+	private boolean canMove; // checks if the current player can move
+	private int diceRoll = 0;
 
 	public GUIGame() {
 		setTitle("Cluedo");
@@ -35,7 +38,13 @@ public class GUIGame extends JFrame {
 		// add a menu bar to the top
 		this.addMenuBar();
 		this.setupGame();
-		
+
+
+		// initialize the keyboard listener
+		addKeyListener(new KeyboardListener());
+		setFocusable(true);
+
+
 		this.add(panel);
 	}
 
@@ -177,7 +186,10 @@ public class GUIGame extends JFrame {
 	}
 
 	private void drawBoard() {
-		this.add(new GUIBoard(board));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(guiBoard);
+
+		board.setCurrentPlayer(board.getPlayers().get(0));
 	}
 	////////////////////start game
 
@@ -187,5 +199,41 @@ public class GUIGame extends JFrame {
 			GUIGame game = new GUIGame();
 			game.setVisible(true);
 		});
+	}
+
+	private class KeyboardListener implements KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// if the r key is pressed
+			if (e.getKeyChar() == 'r') {
+				// roll the dice, and allow the player move
+				diceRoll = board.rollDice();
+				canMove = true;
+			} else {
+				// check if the game isn't over, and that the player can move
+				if (!board.gameover() && canMove) {
+					// move the player
+					int move = board.activeMove("" + e.getKeyChar(), diceRoll);
+					// check if the move is valid
+					if (move >= 0) {
+						diceRoll = move;
+					}
+				}
+				// if the move count is less than 1
+				if (diceRoll <= 0 && canMove) {
+					// disable player's movement
+					canMove = false;
+					board.setCurrentPlayer(((Board) board).nextPlayer());
+				}
+			}
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
 	}
 }

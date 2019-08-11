@@ -204,7 +204,7 @@ public class Board {
 	public String getGrid() {
 		return boardGrid.display();
 	}
-	
+
 	public char[][] get2dGrid() {
 		return boardGrid.getMainGrid();
 	}
@@ -327,6 +327,22 @@ public class Board {
 
 	public ArrayList<Player> getPlayers() {
 		return players;
+	}
+
+	public Player nextPlayer() {
+		// get the index of the current player
+		int index = players.indexOf(currentPlayer);
+
+		// check if the current player's index is the last one in the list
+		if (index == players.size() - 1) {
+			// set index to 0
+			index = 0;
+		} else {
+			// otherwise increase the index
+			++index;
+		}
+
+		return players.get(index);
 	}
 
 	public void addPlayer(Player p) {

@@ -1,17 +1,23 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.*;
 
 import game.Board;
 
 public class GUIBoard extends JPanel {
-	Board board;
+
+	
 	Dimension screenSize;
 	int width, height;
 	int rectSize=15;
 	int boardOffsetX=20,boardOffsetY=20;
 	
+
+	private Board board;
+
 
 	public GUIBoard(Board board) {
 		this.board = board;
@@ -37,6 +43,7 @@ public class GUIBoard extends JPanel {
 				if (grid[i][j] == '#') {
 					
 					g.setColor(Color.DARK_GRAY);
+
 					g.fillRect((wallCount * rectSize) + boardOffsetX, (i * rectSize) + boardOffsetX, rectSize, rectSize);
 					wallCount++;
 				}
@@ -47,9 +54,14 @@ public class GUIBoard extends JPanel {
 				}
 				else if (Character.isLetter(grid[i][j])) {// if the current character is a letter
 					// draw it as a string
+					g.setColor(Color.BLUE);
+					g.setFont(new Font("Arial", Font.BOLD, 12));
 					g.drawString("" + grid[i][j],(wallCount * rectSize) + boardOffsetX,(i * rectSize) + boardOffsetY+rectSize) ;
 					wallCount++;
-				}
+
+					
+					// if the current character is a letter
+				} 
 			}
 			wallCount=0;
 		}
