@@ -176,7 +176,7 @@ public class GUIGame extends JFrame {
 	private void drawBoard() {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(guiBoard);
-		
+
 		board.setCurrentPlayer(board.getPlayers().get(0));
 	}
 
@@ -199,10 +199,12 @@ public class GUIGame extends JFrame {
 				// check if the game isn't over, and that the player can move
 				if (!board.gameover() && canMove) {
 					// move the player
-					diceRoll = board.activeMove("" + e.getKeyChar(), diceRoll);
-					guiBoard.repaint();
+					int move = board.activeMove("" + e.getKeyChar(), diceRoll);
+					// check if the move is valid
+					if (move >= 0) {
+						diceRoll = move;
+					}
 				}
-
 				// if the move count is less than 1
 				if (diceRoll <= 0 && canMove) {
 					// disable player's movement
