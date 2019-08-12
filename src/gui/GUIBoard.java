@@ -29,8 +29,6 @@ public class GUIBoard extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		this.setLayout(null);
 		
 		//draw the grid
 		char grid[][] = board.get2dGrid();		
@@ -56,11 +54,8 @@ public class GUIBoard extends JPanel {
 					// draw it as a string
 					g.setColor(Color.BLUE);
 					g.setFont(new Font("Arial", Font.BOLD, 12));
-					g.drawString("" + grid[i][j],(wallCount * rectSize) + boardOffsetX,(i * rectSize) + boardOffsetY+rectSize) ;
+					g.drawString("" + grid[i][j],(wallCount * rectSize) + boardOffsetX + 4,(i * rectSize) + boardOffsetY+rectSize) ;
 					wallCount++;
-
-					
-					// if the current character is a letter
 				} 
 			}
 			wallCount=0;
@@ -70,7 +65,7 @@ public class GUIBoard extends JPanel {
 		
 	}
 	public void drawCheckeredGrid(char grid[][],Graphics g) {//draw the checkered cells of the board
-		int boardWidth=(((grid[0].length/2)-1)*rectSize);	
+		int boardWidth=(((grid[0].length/2)-1)*rectSize);
 		
 		g.drawLine(boardOffsetX, boardOffsetY+((grid.length)*rectSize ),boardOffsetX+(((grid[0].length/2)-1)*rectSize) , boardOffsetY+((grid.length)*rectSize ));
 		g.drawLine(boardOffsetX+boardWidth, boardOffsetY, boardOffsetX+boardWidth, boardOffsetY+((grid.length)*rectSize ));

@@ -113,10 +113,13 @@ public class GUIGame extends JFrame {
 	private void characterSelection(int numOfPlayers, final int currentPlayer) {
 		// check if all players have chosen a character
 		if (numOfPlayers == 0) {
+			// remove everything on the panel
 			panel.removeAll();
 			panel.updateUI();
+			// distribute cards between the players
 			distributeCards();
 			
+			// exit this method
 			return;
 		}
 
@@ -186,7 +189,6 @@ public class GUIGame extends JFrame {
 	}
 
 	private void drawBoard() {
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(guiBoard);
 
 		board.setCurrentPlayer(board.getPlayers().get(0));
@@ -223,6 +225,7 @@ public class GUIGame extends JFrame {
 				if (diceRoll <= 0 && canMove) {
 					// disable player's movement
 					canMove = false;
+					// allow the next player to move
 					board.setCurrentPlayer(((Board) board).nextPlayer());
 				}
 			}
