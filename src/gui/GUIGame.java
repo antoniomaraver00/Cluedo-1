@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 import game.Board;
 import player.Player;
@@ -13,6 +14,9 @@ public class GUIGame extends JFrame {
 	private JPanel panel = new JPanel();
 	private Board board = new Board();
 	private GUIBoard guiBoard = new GUIBoard(board);
+	private GUIBoardInteract guiBoardLowerPanel= new GUIBoardInteract(board);
+	private  GUIPlayerCardsPanel guiPlayerCardsPanel = new  GUIPlayerCardsPanel(board);
+	private GUIArrowKeys guiArrowKeys = new GUIArrowKeys(board);
 	private Dimension screenSize;
 	private int width, height;
 	private boolean canMove; // checks if the current player can move
@@ -46,6 +50,7 @@ public class GUIGame extends JFrame {
 
 
 		this.add(panel);
+		
 	}
 
 	private void addMenuBar() {
@@ -188,11 +193,18 @@ public class GUIGame extends JFrame {
 	private void drawBoard() {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(guiBoard);
-
+		
+		
+		bottomPane();//initialize the bottom interaction pane
+		cardPane();//initialise right hand player card pane
 		board.setCurrentPlayer(board.getPlayers().get(0));
 	}
-	////////////////////start game
-
+	public void bottomPane() {
+		add(guiBoardLowerPanel,BorderLayout.SOUTH);	
+	}
+	public void cardPane() {
+		add( guiPlayerCardsPanel,BorderLayout.EAST);
+	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {

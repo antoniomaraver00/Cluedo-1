@@ -12,8 +12,12 @@ public class GUIBoard extends JPanel {
 	
 	Dimension screenSize;
 	int width, height;
-	int rectSize=15;
+	int rectSize=12;
 	int boardOffsetX=20,boardOffsetY=20;
+	int totalBoardWidth;
+	int totalBoardHeight;
+	char grid[][];
+	
 	
 
 	private Board board;
@@ -21,6 +25,16 @@ public class GUIBoard extends JPanel {
 
 	public GUIBoard(Board board) {
 		this.board = board;
+		setup();
+	}
+	private void setup() {
+		grid=board.get2dGrid();
+		//set x,y fields the value of the total distance the boards edges are from the top left hand corner.
+		totalBoardWidth = boardOffsetX+(((grid[0].length/2)-1)*rectSize);
+		totalBoardHeight =  boardOffsetY+((grid.length)*rectSize);
+		
+		
+		//this.add(guiBoardLowerPanel);
 	}
 
 	/*
@@ -29,7 +43,7 @@ public class GUIBoard extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
+		
 		this.setLayout(null);
 		
 		//draw the grid
@@ -65,12 +79,13 @@ public class GUIBoard extends JPanel {
 			}
 			wallCount=0;
 		}
+		
 		repaint();
 		
 		
 	}
 	public void drawCheckeredGrid(char grid[][],Graphics g) {//draw the checkered cells of the board
-		int boardWidth=(((grid[0].length/2)-1)*rectSize);	
+		int boardWidth=(((grid[0].length/2)-1)*rectSize);//width of the back-end board (including all characters) [50]. true value = [24], (n/2-1).	
 		
 		g.drawLine(boardOffsetX, boardOffsetY+((grid.length)*rectSize ),boardOffsetX+(((grid[0].length/2)-1)*rectSize) , boardOffsetY+((grid.length)*rectSize ));
 		g.drawLine(boardOffsetX+boardWidth, boardOffsetY, boardOffsetX+boardWidth, boardOffsetY+((grid.length)*rectSize ));
