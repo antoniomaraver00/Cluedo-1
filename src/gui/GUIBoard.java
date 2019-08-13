@@ -43,8 +43,11 @@ public class GUIBoard extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+<<<<<<< HEAD
 		
 		this.setLayout(null);
+=======
+>>>>>>> b0e01097c4715498b158d61a328e8d55e468c33c
 		
 		//draw the grid
 		char grid[][] = board.get2dGrid();		
@@ -70,11 +73,8 @@ public class GUIBoard extends JPanel {
 					// draw it as a string
 					g.setColor(Color.BLUE);
 					g.setFont(new Font("Arial", Font.BOLD, 12));
-					g.drawString("" + grid[i][j],(wallCount * rectSize) + boardOffsetX,(i * rectSize) + boardOffsetY+rectSize) ;
+					g.drawString("" + grid[i][j],(wallCount * rectSize) + boardOffsetX + 4,(i * rectSize) + boardOffsetY+rectSize) ;
 					wallCount++;
-
-					
-					// if the current character is a letter
 				} 
 			}
 			wallCount=0;
@@ -85,7 +85,11 @@ public class GUIBoard extends JPanel {
 		
 	}
 	public void drawCheckeredGrid(char grid[][],Graphics g) {//draw the checkered cells of the board
+<<<<<<< HEAD
 		int boardWidth=(((grid[0].length/2)-1)*rectSize);//width of the back-end board (including all characters) [50]. true value = [24], (n/2-1).	
+=======
+		int boardWidth=(((grid[0].length/2)-1)*rectSize);
+>>>>>>> b0e01097c4715498b158d61a328e8d55e468c33c
 		
 		g.drawLine(boardOffsetX, boardOffsetY+((grid.length)*rectSize ),boardOffsetX+(((grid[0].length/2)-1)*rectSize) , boardOffsetY+((grid.length)*rectSize ));
 		g.drawLine(boardOffsetX+boardWidth, boardOffsetY, boardOffsetX+boardWidth, boardOffsetY+((grid.length)*rectSize ));
