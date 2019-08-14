@@ -69,7 +69,7 @@ public class Grid {
 	}
 
 	public void setGridChar(int oldRow, int oldCol, int newRow, int newCol, char playerIcon) {
-		// todo code to check if the move is valid(desired location is unoccupied, valid
+		
 		// cell, within dice number range)
 		if (isAtSpawn(oldRow, oldCol)) {
 			mainGrid[oldRow][oldCol] = '#';

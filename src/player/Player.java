@@ -27,7 +27,7 @@ public class Player {
 	}
 
 	public void playerMove(int newY, int newX,Grid g) {//move a player to a position on the board
-		// need to check if move is valid (todo)
+		
 		move.apply(position, newY, newX, this.getBoardName(),g);
 	}
 
