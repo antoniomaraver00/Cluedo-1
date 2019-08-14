@@ -3,6 +3,8 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import cards.Card;
+import cards.Room;
 import game.Board;
 import game.Dice;
 import player.Player;
@@ -48,14 +50,12 @@ public class GUIGame extends JFrame {
 		this.addMenuBar();
 		this.setupGame();
 
-
 		// initialize the keyboard listener
 		addKeyListener(new KeyboardListener());
 		setFocusable(true);
 
-
 		this.add(panel);
-		
+
 	}
 
 	private void addMenuBar() {
@@ -70,11 +70,11 @@ public class GUIGame extends JFrame {
 				System.exit(0);
 			}
 		});
-		//create a restart item
+		// create a restart item
 		JMenuItem restart = new JMenuItem(new AbstractAction("Restart") {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
+				// TODO
 			}
 		});
 		// add the items to the menu
@@ -117,7 +117,7 @@ public class GUIGame extends JFrame {
 
 			panel.add(buttons[i]);
 		}
-		
+
 	}
 
 	private void characterSelection(int numOfPlayers, final int currentPlayer) {
@@ -128,7 +128,7 @@ public class GUIGame extends JFrame {
 			panel.updateUI();
 			// distribute cards between the players
 			distributeCards();
-			
+
 			// exit this method
 			return;
 		}
@@ -200,10 +200,9 @@ public class GUIGame extends JFrame {
 
 	private void drawBoard() {
 		panel.add(guiBoard);
-		
-		
-		bottomPane();//initialize the bottom interaction pane
-		cardPane();//initialise right hand player card pane
+
+		bottomPane();// initialize the bottom interaction pane
+		cardPane();// initialise right hand player card pane
 		board.setCurrentPlayer(board.getPlayers().get(0));
 		
 		startGame();//start rounds
@@ -215,15 +214,54 @@ public class GUIGame extends JFrame {
 		//int firstPlayer = findWhoGoesFirst();
 		
 	}
-	
-	
-	
-	
+
 	public void bottomPane() {
-		add(guiBoardLowerPanel,BorderLayout.SOUTH);	
+		add(guiBoardLowerPanel, BorderLayout.SOUTH);
 	}
+
 	public void cardPane() {
-		add( guiPlayerCardsPanel,BorderLayout.EAST);
+		add(guiPlayerCardsPanel, BorderLayout.EAST);
+	}
+	
+	private void handleInsideRoom(Room currentRoom) {
+		board.getCurrentPlayer().setPreviousRoom(currentRoom);
+
+		// options the player has to make inside the room
+		String[] options = { "Suggestion", "Accusation" };
+		// show a dialog box for the player to make a choice
+		String choice = (String) JOptionPane.showInputDialog(null,
+				board.getCurrentPlayer() + " has entered the " + currentRoom
+						+ ". Please choose an option:",
+				"Inside a room", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+		Card[][] availableCards = board.getCurrentPlayer().chooseCards(board.getCurrentPlayer().getCurrentRoom(),
+				board.getWeapons(), board.getSuspects());
+		
+		Card murderWeapon = (Card) JOptionPane.showInputDialog(null, "Please select a murder weapon",
+				"Choose a card", JOptionPane.INFORMATION_MESSAGE, null, availableCards[0], availableCards[0][0]);
+		
+		Card suspect = (Card) JOptionPane.showInputDialog(null, "Please select a suspect",
+				"Choose a card", JOptionPane.INFORMATION_MESSAGE, null, availableCards[1], availableCards[1][0]);
+		
+		ArrayList<Card> chosenCards = new ArrayList<>();
+		
+		if (board.getCurrentPlayer().getExcludedCards().contains(currentRoom)) {
+			chosenCards.add(currentRoom);
+		}
+		
+		chosenCards.add(murderWeapon);
+		chosenCards.add(suspect);
+		
+		String result = "";
+		
+		// check the player's choice
+		if (choice.equals(options[0])) {
+			result = board.doSuggestion(board.getCurrentPlayer(), chosenCards.toArray(new Card[chosenCards.size()]));
+		} else if (choice.equals(options[1])) {
+			result = board.doAccusation(board.getCurrentPlayer(), chosenCards.toArray(new Card[chosenCards.size()]));
+		}
+		
+		JOptionPane.showMessageDialog(null, result);
 	}
 
 	public static void main(String[] args) {
@@ -254,6 +292,17 @@ public class GUIGame extends JFrame {
 					// check if the move is valid
 					if (move >= 0) {
 						diceRoll = move;
+					}
+
+					// check if the player has entered a room
+					Room currentRoom = board.getRoom(board.getCurrentPlayer());
+
+					if (currentRoom != null) {
+						diceRoll = 0;
+						handleInsideRoom(currentRoom);
+						board.nextPlayer();
+					} else {
+						board.getCurrentPlayer().setPreviousRoom(null);
 					}
 				}
 				// if the move count is less than 1
