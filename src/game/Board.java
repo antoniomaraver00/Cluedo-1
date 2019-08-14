@@ -71,26 +71,30 @@ public class Board {
 		// keystrokes map to x,y coords
 		// if player already in room, moves dont count towards diceroll, nor can they
 		// make suggestions or accusations untill re-entering room
-		if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0,boardGrid)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0,boardGrid);
+		if (r.equalsIgnoreCase("w") && currentPlayer.isValid(-1, 0, boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() - 1, currentPlayer.getPositon().getX() + 0,
+					boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
 			}
-		} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2,boardGrid)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2,boardGrid);
+		} else if (r.equalsIgnoreCase("d") && currentPlayer.isValid(0, 2, boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + 2,
+					boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
 			}
-		} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0,boardGrid)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0,boardGrid);
+		} else if (r.equalsIgnoreCase("s") && currentPlayer.isValid(1, 0, boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 1, currentPlayer.getPositon().getX() + 0,
+					boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
 			}
-		} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2,boardGrid)) {
-			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2,boardGrid);
+		} else if (r.equalsIgnoreCase("a") && currentPlayer.isValid(0, -2, boardGrid)) {
+			currentPlayer.playerMove(currentPlayer.getPositon().getY() + 0, currentPlayer.getPositon().getX() + -2,
+					boardGrid);
 			if (currentPlayer.getPreviousRoom() == getRoom(currentPlayer) && currentPlayer.getPreviousRoom() != null) {
 			} else {
 				return --roll;
@@ -124,8 +128,7 @@ public class Board {
 			currentPlayer.removeFromGame();
 
 			// change eliminated players board piece to a moveable area
-			boardGrid.setGridChar(currentPlayer.getPositon().getY(),
-					currentPlayer.getPositon().getX(), '_');
+			boardGrid.setGridChar(currentPlayer.getPositon().getY(), currentPlayer.getPositon().getX(), '_');
 
 			// check if there is at most one player remaining in the game
 			if (allPlayersEliminated()) {
@@ -220,7 +223,7 @@ public class Board {
 		int count = 0;
 		for (Player p : players) {
 
-			p.spawnMove(spawnPos[count++], spawnPos[count++],boardGrid);
+			p.spawnMove(spawnPos[count++], spawnPos[count++], boardGrid);
 
 		}
 	}
@@ -343,6 +346,15 @@ public class Board {
 			// otherwise increase the index
 			++index;
 		}
+		
+		while (!players.get(index).getStillInGame()) {
+			if (index == players.size() - 1) {
+				// set index to 0
+				index = 0;
+			}
+			
+			++index;
+		}
 
 		return players.get(index);
 	}
@@ -403,6 +415,7 @@ public class Board {
 		ArrayList<Card> newCards = (ArrayList<Card>) Collections.unmodifiableList(cards);
 		return newCards;
 	}
+
 	public Dice getDice() {
 		return die;
 	}
@@ -415,7 +428,6 @@ public class Board {
 	public void applyToGrid() {
 
 	}
-	
 
 	public String toString() {
 		return super.toString() + "[" + "]";

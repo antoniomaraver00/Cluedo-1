@@ -12,7 +12,7 @@ import player.Player;
 
 public class Game {
 	private Board board = new Board();
-	
+
 	private void setupGame() {
 		Scanner scn = new Scanner(System.in);
 		// get the number of players
@@ -177,13 +177,17 @@ public class Game {
 				Room currentRoom = board.getRoom(board.getCurrentPlayer());
 
 				if (currentRoom != null) {
+
+					if (board.getCurrentPlayer().getPreviousRoom() == null) {
+						numOfMoves = 0;
+						rollCount = 0;// player cannot move more steps once in room
+						handleInsideRoom();
+						formatPrint("You are inside the " + currentRoom.toString());
+					}
+
 					// notify the player which room they are in
 					board.getCurrentPlayer().setPreviousRoom(currentRoom);
-					formatPrint("You are inside the " + currentRoom.toString());
 
-					numOfMoves = 0;
-					rollCount = 0;// player cannot move more steps once in room
-					handleInsideRoom();
 				} // proccess player if they enter room
 				else {
 					board.getCurrentPlayer().setPreviousRoom(null);
@@ -233,7 +237,7 @@ public class Game {
 		if (board.getCurrentPlayer().getExcludedCards().contains(currentRoom)) {
 			chosenCards.add(currentRoom);
 		}
-		
+
 		chosenCards.add(murderWeapon);
 		chosenCards.add(murderSuspect);
 
@@ -290,7 +294,7 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
-		
+
 		new Game().setupGame();
 	}
 }

@@ -20,15 +20,15 @@ public class GUIGame extends JFrame {
 	private JPanel panel = new JPanel();
 	private Board board = new Board();
 	private GUIBoard guiBoard = new GUIBoard(board);
-	private GUIBoardInteract guiBoardLowerPanel= new GUIBoardInteract(board,this);
-	private  GUIPlayerCardsPanel guiPlayerCardsPanel = new  GUIPlayerCardsPanel(board);
+	private GUIBoardInteract guiBoardLowerPanel = new GUIBoardInteract(board, this);
+	private GUIPlayerCardsPanel guiPlayerCardsPanel = new GUIPlayerCardsPanel(board);
 	private GUIArrowKeys guiArrowKeys = new GUIArrowKeys(board);
 	private Dimension screenSize;
 	private int width, height;
 	private boolean canMove; // checks if the current player can move
 	private int diceRoll = 0;
 	private ArrayList<Integer> playerRolls = new ArrayList<>();
-	
+
 	public GUIGame() {
 		setTitle("Cluedo");
 		// get the size of the screen
@@ -204,15 +204,15 @@ public class GUIGame extends JFrame {
 		bottomPane();// initialize the bottom interaction pane
 		cardPane();// initialise right hand player card pane
 		board.setCurrentPlayer(board.getPlayers().get(0));
-		
-		startGame();//start rounds
+
+		startGame();// start rounds
 	}
-	
+
 	public void startGame() {
-		//start by rolling off
-		
-		//int firstPlayer = findWhoGoesFirst();
-		
+		// start by rolling off
+
+		// int firstPlayer = findWhoGoesFirst();
+
 	}
 
 	public void bottomPane() {
@@ -222,7 +222,7 @@ public class GUIGame extends JFrame {
 	public void cardPane() {
 		add(guiPlayerCardsPanel, BorderLayout.EAST);
 	}
-	
+
 	private void handleInsideRoom(Room currentRoom) {
 		board.getCurrentPlayer().setPreviousRoom(currentRoom);
 
@@ -230,37 +230,36 @@ public class GUIGame extends JFrame {
 		String[] options = { "Suggestion", "Accusation" };
 		// show a dialog box for the player to make a choice
 		String choice = (String) JOptionPane.showInputDialog(null,
-				board.getCurrentPlayer() + " has entered the " + currentRoom
-						+ ". Please choose an option:",
+				board.getCurrentPlayer() + " has entered the " + currentRoom + ". Please choose an option:",
 				"Inside a room", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
 		Card[][] availableCards = board.getCurrentPlayer().chooseCards(board.getCurrentPlayer().getCurrentRoom(),
 				board.getWeapons(), board.getSuspects());
-		
-		Card murderWeapon = (Card) JOptionPane.showInputDialog(null, "Please select a murder weapon",
-				"Choose a card", JOptionPane.INFORMATION_MESSAGE, null, availableCards[0], availableCards[0][0]);
-		
-		Card suspect = (Card) JOptionPane.showInputDialog(null, "Please select a suspect",
-				"Choose a card", JOptionPane.INFORMATION_MESSAGE, null, availableCards[1], availableCards[1][0]);
-		
+
+		Card murderWeapon = (Card) JOptionPane.showInputDialog(null, "Please select a murder weapon", "Choose a card",
+				JOptionPane.INFORMATION_MESSAGE, null, availableCards[0], availableCards[0][0]);
+
+		Card suspect = (Card) JOptionPane.showInputDialog(null, "Please select a suspect", "Choose a card",
+				JOptionPane.INFORMATION_MESSAGE, null, availableCards[1], availableCards[1][0]);
+
 		ArrayList<Card> chosenCards = new ArrayList<>();
-		
+
 		if (board.getCurrentPlayer().getExcludedCards().contains(currentRoom)) {
 			chosenCards.add(currentRoom);
 		}
-		
+
 		chosenCards.add(murderWeapon);
 		chosenCards.add(suspect);
-		
+
 		String result = "";
-		
+
 		// check the player's choice
 		if (choice.equals(options[0])) {
 			result = board.doSuggestion(board.getCurrentPlayer(), chosenCards.toArray(new Card[chosenCards.size()]));
 		} else if (choice.equals(options[1])) {
 			result = board.doAccusation(board.getCurrentPlayer(), chosenCards.toArray(new Card[chosenCards.size()]));
 		}
-		
+
 		JOptionPane.showMessageDialog(null, result);
 	}
 
@@ -273,16 +272,15 @@ public class GUIGame extends JFrame {
 
 	private class KeyboardListener implements KeyListener {
 		@Override
-		public void keyTyped(KeyEvent e) {			
+		public void keyTyped(KeyEvent e) {
 			// if the r key is pressed
-			if (e.getKeyChar() == 'r'&&!canMove) {
+			if (e.getKeyChar() == 'r' && !canMove) {
 				// roll the dice, and allow the player move
 				diceRoll = board.rollDice();
-				
-				
-				guiBoardLowerPanel.setRollCount();//Increment the total roll count
+
+				guiBoardLowerPanel.setRollCount();// Increment the total roll count
 				guiBoardLowerPanel.changeDiceValue(diceRoll);
-				
+
 				canMove = true;
 			} else {
 				// check if the game isn't over, and that the player can move
@@ -298,9 +296,14 @@ public class GUIGame extends JFrame {
 					Room currentRoom = board.getRoom(board.getCurrentPlayer());
 
 					if (currentRoom != null) {
-						diceRoll = 0;
-						handleInsideRoom(currentRoom);
-						board.nextPlayer();
+						// if the player has entered to a new room
+						if (board.getCurrentPlayer().getPreviousRoom() == null) {
+							// don't allow them to make anymore moves
+							diceRoll = 0;
+							// ask them to make a suggestion/accusation
+							handleInsideRoom(currentRoom);
+						}
+						board.getCurrentPlayer().setPreviousRoom(currentRoom);
 					} else {
 						board.getCurrentPlayer().setPreviousRoom(null);
 					}
@@ -317,19 +320,20 @@ public class GUIGame extends JFrame {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			
+
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 	}
+
 	public void setDiceRoll(int roll) {
 		diceRoll = roll;
 	}
+
 	public void setMoveable() {
-		canMove=true;
+		canMove = true;
 	}
 
-	
 }
