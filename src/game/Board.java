@@ -3,6 +3,7 @@ package game;
 import java.util.*;
 
 import cards.*;
+import gui.GUIBoardInteract;
 import player.*;
 import players.*;
 import rooms.*;
@@ -22,6 +23,7 @@ public class Board {
 	private ArrayList<Card> cards = new ArrayList<>();
 	private ArrayList<ArrayList<Card>> hands = new ArrayList<>(); // hands of shuffled cards distributed randomly
 																	// between players
+	private Dice die = new Dice();
 
 	private final Player[] allPlayers = { new MissScarlett(null), new ColonelMustard(null), new MrsWhite(null),
 			new MrGreen(null), new MrsPeacock(null), new ProfessorPlum(null) };
@@ -401,6 +403,9 @@ public class Board {
 		ArrayList<Card> newCards = (ArrayList<Card>) Collections.unmodifiableList(cards);
 		return newCards;
 	}
+	public Dice getDice() {
+		return die;
+	}
 
 	public boolean hasCards() {
 		boolean has = cards.size() > 0;
@@ -410,6 +415,7 @@ public class Board {
 	public void applyToGrid() {
 
 	}
+	
 
 	public String toString() {
 		return super.toString() + "[" + "]";

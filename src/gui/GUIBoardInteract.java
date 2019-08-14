@@ -2,6 +2,8 @@ package gui;
 
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.*;
@@ -13,17 +15,26 @@ import game.Board;
 
 
 public class GUIBoardInteract extends JPanel {
+	private GUIGame gg;
 	private Board board;
 	Dimension screenSize;
 	int gridX,gridY;
 	int width, height;
+	private int rollValue;
+	private int rollCount=0;
+	private JPanel dpanel;//jpanel which displays value of dice roll
 	
-	public GUIBoardInteract(Board board) {
+	public GUIBoardInteract(Board board, GUIGame gg) {
+		this.gg=gg;
 		this.board = board;
 		setup();
 		
 	}
 	private void setup() {
+		//create panel for dice roll value
+		createDicePanel();
+		
+		
 		setBorder(new LineBorder(Color.RED,5));//red boarder around panel
 		setPreferredSize(new Dimension(0,75));//size of panel to cover bottom of window
 		this.setBackground(Color.LIGHT_GRAY);
@@ -33,7 +44,7 @@ public class GUIBoardInteract extends JPanel {
 		JButton rollButton = new JButton("Roll Dice");
 		JButton suggest = new JButton("Make suggestion");
 		JButton accuse = new JButton("Make accusation");
-		JButton cardShow = new JButton("Show cards");
+
 		
 		//set arrow key buttons
 		JButton arrowUP = new JButton("");
@@ -56,37 +67,58 @@ public class GUIBoardInteract extends JPanel {
 		add(rollButton );
 		add(suggest);
 		add(accuse);
-		add(cardShow);
 		add(arrowUP);
 		add(arrowDOWN);
 		add(arrowLEFT);
 		add(arrowRIGHT);
-		
+		// add action event listeners to buttons
+		rollButton.setFocusable(false);
+		rollButton.addActionListener(new ActionListener() {//roll button
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int roll = board.getDice().roll();
+				
+				changeDiceValue(roll);//change the dice value on screen
+				rollCount++;//incrememnt the total number of rolls in the game so far
+			}
+		});
 	}
-	private Image makeImageIcon(String filename) {		
+	
+	public void changeDiceValue(int roll) {
+		dpanel.removeAll();
+		gg.setDiceRoll(roll);//send diceValue to game
+		gg.setMoveable();//let game know that dice is rolled and player is now moveable
+		
+		
+		
+		//create label showing number rolled
+		JLabel dvl = new JLabel();		
+		dvl.setText(String.valueOf(roll));
+		dpanel.add(dvl);
+		
+		updateUI();
+	}
+	
+	private Image makeImageIcon(String filename) {//create the arrow key icons		
 		
 		//create the image icon, returning null if image is invalid
 		Image img = new ImageIcon(this.getClass().getResource(filename)).getImage();
 		if (img==null) {return null;}
 		return img;
 	}
-	/**
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private void createDicePanel() {
+		dpanel = new JPanel();
+		dpanel.setBorder(new LineBorder(Color.blue,5));
+		this.add(dpanel);
 		
-		//this.setBounds(50, 400, 100, 100);
-		
-		width = (int) (300);//screenSize.width * 0.5
-		height = (int) (300);//screenSize.height * 0.1
-		//setSize(new Dimension(width, height));
-		
-		this.setBackground(Color.BLUE);
-		
-		repaint();
 	}
-	*/
+	
+	public int getRollCount() {
+		return rollCount;
+	}
+	public void setRollCount() {
+		rollCount++;
+	}
 	
 	
 }

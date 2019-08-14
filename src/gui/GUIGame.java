@@ -4,24 +4,29 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import game.Board;
+import game.Dice;
 import player.Player;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class GUIGame extends JFrame {
 	private JPanel panel = new JPanel();
 	private Board board = new Board();
 	private GUIBoard guiBoard = new GUIBoard(board);
-	private GUIBoardInteract guiBoardLowerPanel= new GUIBoardInteract(board);
+	private GUIBoardInteract guiBoardLowerPanel= new GUIBoardInteract(board,this);
 	private  GUIPlayerCardsPanel guiPlayerCardsPanel = new  GUIPlayerCardsPanel(board);
 	private GUIArrowKeys guiArrowKeys = new GUIArrowKeys(board);
 	private Dimension screenSize;
 	private int width, height;
 	private boolean canMove; // checks if the current player can move
 	private int diceRoll = 0;
-
+	private ArrayList<Integer> playerRolls = new ArrayList<>();
+	
 	public GUIGame() {
 		setTitle("Cluedo");
 		// get the size of the screen
@@ -200,7 +205,20 @@ public class GUIGame extends JFrame {
 		bottomPane();//initialize the bottom interaction pane
 		cardPane();//initialise right hand player card pane
 		board.setCurrentPlayer(board.getPlayers().get(0));
+		
+		startGame();//start rounds
 	}
+	
+	public void startGame() {
+		//start by rolling off
+		
+		//int firstPlayer = findWhoGoesFirst();
+		
+	}
+	
+	
+	
+	
 	public void bottomPane() {
 		add(guiBoardLowerPanel,BorderLayout.SOUTH);	
 	}
@@ -217,11 +235,16 @@ public class GUIGame extends JFrame {
 
 	private class KeyboardListener implements KeyListener {
 		@Override
-		public void keyTyped(KeyEvent e) {
+		public void keyTyped(KeyEvent e) {			
 			// if the r key is pressed
-			if (e.getKeyChar() == 'r') {
+			if (e.getKeyChar() == 'r'&&!canMove) {
 				// roll the dice, and allow the player move
 				diceRoll = board.rollDice();
+				
+				
+				guiBoardLowerPanel.setRollCount();//Increment the total roll count
+				guiBoardLowerPanel.changeDiceValue(diceRoll);
+				
 				canMove = true;
 			} else {
 				// check if the game isn't over, and that the player can move
@@ -245,10 +268,19 @@ public class GUIGame extends JFrame {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
+			
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 	}
+	public void setDiceRoll(int roll) {
+		diceRoll = roll;
+	}
+	public void setMoveable() {
+		canMove=true;
+	}
+
+	
 }
