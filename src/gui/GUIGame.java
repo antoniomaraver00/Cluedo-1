@@ -280,7 +280,7 @@ public class GUIGame extends JFrame {
 			// if the r key is pressed
 
 			
-
+			guiPlayerCardsPanel.setShowHandButton();//make the show hand button display current players name
 			if (e.getKeyChar() == 'r' && !canMove) {
 
 				// roll the dice, and allow the player move

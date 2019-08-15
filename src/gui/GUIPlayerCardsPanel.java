@@ -70,6 +70,7 @@ public class GUIPlayerCardsPanel extends JPanel {
 		jb.setFocusable(false);
 		jb.setBackground(Color.ORANGE);
 	    jb.setForeground(Color.BLACK);
+	    showHand=jb;
 		add(jb);
 
 	}
@@ -102,9 +103,10 @@ public class GUIPlayerCardsPanel extends JPanel {
 
 			add(label);
 			
-		}
-
-		// add(label);
-
+		}		
 	}
+	public void setShowHandButton() {
+		showHand.setText(board.getCurrentPlayer()+"'s hand");
+	}
+	
 }
