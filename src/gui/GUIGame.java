@@ -205,7 +205,6 @@ public class GUIGame extends JFrame {
 		cardPane();// initialise right hand player card pane
 		board.setCurrentPlayer(board.getPlayers().get(0));
 
-
 		startGame();// start rounds
 	}
 
@@ -214,10 +213,7 @@ public class GUIGame extends JFrame {
 
 		// int firstPlayer = findWhoGoesFirst();
 
-
 	}
-	
-	
 
 	public void bottomPane() {
 		add(guiBoardLowerPanel, BorderLayout.SOUTH);
@@ -233,18 +229,34 @@ public class GUIGame extends JFrame {
 		// options the player has to make inside the room
 		String[] options = { "Suggestion", "Accusation" };
 		// show a dialog box for the player to make a choice
-		String choice = (String) JOptionPane.showInputDialog(null,
-				board.getCurrentPlayer() + " has entered the " + currentRoom + ". Please choose an option:",
-				"Inside a room", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		String choice = "";
 
+		// make sure that the player makes a choice
+		while (choice == null || choice.equals("")) {
+			choice = (String) JOptionPane.showInputDialog(null,
+					board.getCurrentPlayer() + " has entered the " + currentRoom + ". Please choose an option:",
+					"Inside a room", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		}
+
+		// get the cards that the player can suggest/accuse
 		Card[][] availableCards = board.getCurrentPlayer().chooseCards(board.getCurrentPlayer().getCurrentRoom(),
 				board.getWeapons(), board.getSuspects());
 
-		Card murderWeapon = (Card) JOptionPane.showInputDialog(null, "Please select a murder weapon", "Choose a card",
-				JOptionPane.INFORMATION_MESSAGE, null, availableCards[0], availableCards[0][0]);
+		Card murderWeapon = null;
 
-		Card suspect = (Card) JOptionPane.showInputDialog(null, "Please select a suspect", "Choose a card",
-				JOptionPane.INFORMATION_MESSAGE, null, availableCards[1], availableCards[1][0]);
+		// make sure that the player chooses a weapon
+		while (murderWeapon == null) {
+			murderWeapon = (Card) JOptionPane.showInputDialog(null, "Please select a murder weapon", "Choose a card",
+					JOptionPane.INFORMATION_MESSAGE, null, availableCards[0], availableCards[0][0]);
+		}
+
+		Card suspect = null;
+
+		// make sure that the player chooses a suspect
+		while (suspect == null) {
+			suspect = (Card) JOptionPane.showInputDialog(null, "Please select a suspect", "Choose a card",
+					JOptionPane.INFORMATION_MESSAGE, null, availableCards[1], availableCards[1][0]);
+		}
 
 		ArrayList<Card> chosenCards = new ArrayList<>();
 
@@ -277,10 +289,16 @@ public class GUIGame extends JFrame {
 	private class KeyboardListener implements KeyListener {
 		@Override
 		public void keyTyped(KeyEvent e) {
+
 			// if the r key is pressed
 
 			
 			guiPlayerCardsPanel.setShowHandButton();//make the show hand button display current players name
+
+			guiPlayerCardsPanel.setShowHandButton();// make the show hand button display current players name
+
+			// if the r key is pressed
+
 			if (e.getKeyChar() == 'r' && !canMove) {
 
 				// roll the dice, and allow the player move
@@ -303,15 +321,22 @@ public class GUIGame extends JFrame {
 						diceRoll = move;
 					}
 
+
 					
 					if (currentRoom != null&&board.getCurrentPlayer().getPreviousRoom()==null) {//player has entered room from hallway												
-						
+
+					
+
+					if (currentRoom != null) {
+
 						diceRoll = 0;
 						board.getCurrentPlayer().setPreviousRoom(currentRoom);
 						
 						handleInsideRoom(currentRoom);
+
 						 
 						board.nextPlayer();
+
 
 						// if the player has entered to a new room
 						if (board.getCurrentPlayer().getPreviousRoom() == null) {
@@ -331,7 +356,7 @@ public class GUIGame extends JFrame {
 					// allow the next player to move
 					board.setCurrentPlayer(((Board) board).nextPlayer());
 				}
-			}
+			}}
 		}
 
 		@Override
