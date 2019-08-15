@@ -295,20 +295,22 @@ public class GUIGame extends JFrame {
 				if (!board.gameover() && canMove) {
 					// move the player
 					int move = board.activeMove("" + e.getKeyChar(), diceRoll);
+					// check if the player has entered a room
+					Room currentRoom = board.getRoom(board.getCurrentPlayer());
+					if (currentRoom==null) {board.getCurrentPlayer().setPreviousRoom(null);}
 					// check if the move is valid
-					if (move >= 0) {
+					if (move >= 0&&currentRoom==null) {
 						diceRoll = move;
 					}
 
-					// check if the player has entered a room
-					Room currentRoom = board.getRoom(board.getCurrentPlayer());
-
-					if (currentRoom != null) {
-
+					
+					if (currentRoom != null&&board.getCurrentPlayer().getPreviousRoom()==null) {//player has entered room from hallway												
+						
 						diceRoll = 0;
+						board.getCurrentPlayer().setPreviousRoom(currentRoom);
+						
 						handleInsideRoom(currentRoom);
-						//if accusation, doAcusation must be invoked to eliminate player from board.
-						// ** 
+						 
 						board.nextPlayer();
 
 						// if the player has entered to a new room
@@ -318,11 +320,9 @@ public class GUIGame extends JFrame {
 							// ask them to make a suggestion/accusation
 							handleInsideRoom(currentRoom);
 						}
-						board.getCurrentPlayer().setPreviousRoom(currentRoom);
+					
 
-					} else {
-						board.getCurrentPlayer().setPreviousRoom(null);
-					}
+					} 
 				}
 				// if the move count is less than 1
 				if (diceRoll <= 0 && canMove) {
