@@ -43,15 +43,14 @@ public class GUIBoard extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-<<<<<<< HEAD
+
 
 
 		
 		this.setLayout(null);
 
 
-=======
->>>>>>> f8e644c8ac8a9b03a70feb1418e5b9e4fc6b6c49
+
 		
 		//draw the grid
 		char grid[][] = board.get2dGrid();		
@@ -89,19 +88,15 @@ public class GUIBoard extends JPanel {
 		
 	}
 	public void drawCheckeredGrid(char grid[][],Graphics g) {//draw the checkered cells of the board
-<<<<<<< HEAD
+
 
 
 		int boardWidth=(((grid[0].length/2)-1)*rectSize);//width of the back-end board (including all characters) [50]. true value = [24], (n/2-1).	
-
 		
 
 
 		
 
-=======
-		int boardWidth=(((grid[0].length/2)-1)*rectSize);//width of the back-end board (including all characters) [50]. true value = [24], (n/2-1).
->>>>>>> f8e644c8ac8a9b03a70feb1418e5b9e4fc6b6c49
 		
 		g.drawLine(boardOffsetX, boardOffsetY+((grid.length)*rectSize ),boardOffsetX+(((grid[0].length/2)-1)*rectSize) , boardOffsetY+((grid.length)*rectSize ));
 		g.drawLine(boardOffsetX+boardWidth, boardOffsetY, boardOffsetX+boardWidth, boardOffsetY+((grid.length)*rectSize ));

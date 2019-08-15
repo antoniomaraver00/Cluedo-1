@@ -205,15 +205,10 @@ public class GUIGame extends JFrame {
 		cardPane();// initialise right hand player card pane
 		board.setCurrentPlayer(board.getPlayers().get(0));
 		
-		startGame();//start rounds
+		
 	}
 	
-	public void startGame() {
-		//start by rolling off
-		
-		//int firstPlayer = findWhoGoesFirst();
-		
-	}
+	
 
 	public void bottomPane() {
 		add(guiBoardLowerPanel, BorderLayout.SOUTH);
@@ -275,7 +270,7 @@ public class GUIGame extends JFrame {
 		@Override
 		public void keyTyped(KeyEvent e) {			
 			// if the r key is pressed
-			if (e.getKeyChar() == 'r'&&!canMove) {
+			if (e.getKeyChar() == 'r'&&!canMove&&board.getCurrentPlayer().getStillInGame()) {
 				// roll the dice, and allow the player move
 				diceRoll = board.rollDice();
 				
@@ -300,6 +295,8 @@ public class GUIGame extends JFrame {
 					if (currentRoom != null) {
 						diceRoll = 0;
 						handleInsideRoom(currentRoom);
+						//if accusation, doAcusation must be invoked to eliminate player from board.
+						// ** 
 						board.nextPlayer();
 					} else {
 						board.getCurrentPlayer().setPreviousRoom(null);
