@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import game.Board;
 import player.Player;
@@ -26,7 +27,9 @@ public class GUIPlayerCardsPanel extends JPanel {
 	Dimension screenSize;
 	Board board;
 	int width, height;
-
+	ArrayList<JLabel> shownLabels = new ArrayList<JLabel>();//list of labels currently being shown on screen
+	JButton showHand;
+	
 	public GUIPlayerCardsPanel(Board board) {
 		this.board = board;
 
@@ -34,28 +37,22 @@ public class GUIPlayerCardsPanel extends JPanel {
 	}
 
 	private void setup() {
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		
 		setBorder(new LineBorder(Color.RED, 5));
 		setPreferredSize(new Dimension(285, 0));
-
+		setLayout(new GridLayout(0,1,0,0));
+		
 		createShowCardsButton();
-		// drawCards();
+		
 
 	}
 
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		// setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		super.paintComponent(g);		
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		// draw the card in the center of the panel
 		this.setBackground(Color.GREEN);
-		g.setColor(Color.WHITE);
-		g.fillRect((getWidth() / 2) - (cardWidth / 2), (getHeight() / 2) - (cardHeight / 2), cardWidth, cardHeight);
-		g.setColor(Color.BLACK);
-		g.drawRect((getWidth() / 2) - (cardWidth / 2), (getHeight() / 2) - (cardHeight / 2), cardWidth, cardHeight);
-
+		
 	}
 
 	public void createShowCardsButton() {
@@ -71,6 +68,8 @@ public class GUIPlayerCardsPanel extends JPanel {
 
 		
 		jb.setFocusable(false);
+		jb.setBackground(Color.ORANGE);
+	    jb.setForeground(Color.BLACK);
 		add(jb);
 
 	}
@@ -79,15 +78,27 @@ public class GUIPlayerCardsPanel extends JPanel {
 
 		// write current player name on top of card
 		if (board.getCurrentPlayer() != null && board.getCurrentPlayer().getHand() != null) {
-
-			for (int i = 0; i < board.getCurrentPlayer().getHand().size(); i++) {
-				JLabel label = new JLabel(board.getCurrentPlayer().getHand().get(i).toString());
-
-				add(label);
+			String buffer = "                                    ";			
+			//shows cards of current player
+			if (shownLabels.isEmpty()) {
+				for (int i = 0; i < board.getCurrentPlayer().getHand().size(); i++) {
+					JLabel label = new JLabel(buffer+board.getCurrentPlayer().getHand().get(i).toString());
+					add(label);
+					shownLabels.add(label);
+				}
+				
+			}
+			else {//if the panel is already displaying cards, remove the cards from screen if "showcards" button reclicked
+				for (int i = 0; i < shownLabels.size(); i++) {
+					remove(shownLabels.get(i));
+				}
+				shownLabels.clear();
+				revalidate();
+				repaint();
 			}
 		} else {
 			JLabel label = new JLabel("player hand");
-			// label.setHorizontalAlignment(JLabel.CENTER);
+			
 
 			add(label);
 			
