@@ -120,11 +120,9 @@ class testPart1 {
 		// the first player's movement into the closest room
 		String movement = "sssaaa";
 
-		int result = -1;
-
 		// start the game
 		for (int i = 0; i < movement.length(); i++) {
-			result = board.activeMove(movement.substring(i, i + 1), diceRoll);
+			board.activeMove(movement.substring(i, i + 1), diceRoll);
 		}
 
 		// get the current room the player is in, which should be the study room
@@ -135,7 +133,7 @@ class testPart1 {
 				board.getWeapons(), board.getSuspects());
 
 		// cards chosen from the list above
-		Card[] chosenCards = new Card[3];
+		Card[] chosenCards = new Card[2];
 		// index of the last element in chosenCards
 		int index = 0;
 
@@ -153,10 +151,10 @@ class testPart1 {
 		// suspect
 		outerloop: for (int i = 0; i < availableCards.length; i++) {
 			// the inner loop loops through the actual cards within the current card type
-			innerloop: for (int j = 0; j < availableCards[i].length; j++) {
+			for (int j = 0; j < availableCards[i].length; j++) {
 
 				// break the outer loop if two cards were added to chosenCards
-				if (index > 2) {
+				if (index > 1) {
 					break outerloop;
 				}
 
@@ -168,7 +166,7 @@ class testPart1 {
 						chosenCards[index] = availableCards[i][j];
 						index++;
 						// break the inner loop and move on to the next card type
-						break innerloop;
+						break outerloop;
 					}
 				}
 
@@ -180,7 +178,7 @@ class testPart1 {
 						chosenCards[index] = availableCards[i][j];
 						index++;
 						// break the inner loop and move on to the next card type
-						break innerloop;
+						break outerloop;
 					}
 				}
 			}
@@ -225,7 +223,7 @@ class testPart1 {
 	 */
 
 	@Test
-	void falseSuggestion() {
+	void correctSuggestion() {
 		Board board = createBoard(3);
 
 		board.spawnPlayers();
@@ -237,11 +235,9 @@ class testPart1 {
 		// the first player's movement into the closest room
 		String movement = "sssaaa";
 
-		int result = -1;
-
 		// start the game
 		for (int i = 0; i < movement.length(); i++) {
-			result = board.activeMove(movement.substring(i, i + 1), diceRoll);
+			board.activeMove(movement.substring(i, i + 1), diceRoll);
 		}
 
 		// get the current room the player is in, which should be the study room
@@ -252,11 +248,11 @@ class testPart1 {
 				board.getWeapons(), board.getSuspects());
 
 		// cards chosen from the list above
-		Card[] chosenCards = new Card[3];
+		Card[] chosenCards = new Card[2];
 		// index of the last element in chosenCards
 		int index = 0;
 
-		// get the other two players
+		// get the second player
 		Player player2 = board.getPlayers().get(1);
 		Player player3 = board.getPlayers().get(2);
 
@@ -270,34 +266,34 @@ class testPart1 {
 		// suspect
 		outerloop: for (int i = 0; i < availableCards.length; i++) {
 			// the inner loop loops through the actual cards within the current card type
-			innerloop: for (int j = 0; j < availableCards[i].length; j++) {
+			for (int j = 0; j < availableCards[i].length; j++) {
 
 				// break the outer loop if two cards were added to chosenCards
-				if (index > 2) {
+				if (index > 1) {
 					break outerloop;
 				}
 
 				// get one card of the current type from the second player's hand
 				for (Card c : player2.getHand()) {
 					// if a card is found
-					if (c.toString().equals(availableCards[i][j].toString())) {
+					if (c == availableCards[i][j]) {
 						// add it to the list
 						chosenCards[index] = availableCards[i][j];
 						index++;
 						// break the inner loop and move on to the next card type
-						break innerloop;
+						break outerloop;
 					}
 				}
 
 				// get one card of the current type from the third player's hand
 				for (Card c : player3.getHand()) {
 					// if a card is found
-					if (c.toString().equals(availableCards[i][j].toString())) {
+					if (c == availableCards[i][j]) {
 						// add it to the list
 						chosenCards[index] = availableCards[i][j];
 						index++;
 						// break the inner loop and move on to the next card type
-						break innerloop;
+						break outerloop;
 					}
 				}
 			}
@@ -305,10 +301,12 @@ class testPart1 {
 
 		// do a suggestion with the cards we got
 		String suggestionResult = board.doSuggestion(currentPlayer, chosenCards);
-		
+
+		System.out.println(suggestionResult);
+
 		// check the outcome of the false suggestion
-		assertEquals(suggestionResult, "none of the players have any of the cards you suggested");
-		
+		assert (suggestionResult.contains("has the card:"));
+
 		// check if Miss Scarlett is in the right position after the suggestion
 		String expectedGrid = "|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"

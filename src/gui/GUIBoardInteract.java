@@ -46,14 +46,24 @@ public class GUIBoardInteract extends JPanel {
 				rollCount++;// incrememnt the total number of rolls in the game so far
 			}
 		});
+		
+		rollButton.setToolTipText("Roll the Dice");
+		
 		JButton suggest = new JButton("Make suggestion");
 		JButton accuse = new JButton("Make accusation");
 
 		// set arrow key buttons
 		JButton arrowUP = new JButton("");
+		arrowUP.setToolTipText("Move Up");
+		
 		JButton arrowDOWN = new JButton("");
+		arrowDOWN.setToolTipText("Move Down");
+		
 		JButton arrowLEFT = new JButton("");
+		arrowLEFT.setToolTipText("Move Left");
+		
 		JButton arrowRIGHT = new JButton("");
+		arrowRIGHT.setToolTipText("Move Right");
 
 		// set button to non focusable
 		rollButton.setFocusable(false);
