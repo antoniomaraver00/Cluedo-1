@@ -295,7 +295,7 @@ public class GUIGame extends JFrame {
 			
 			guiPlayerCardsPanel.setShowHandButton();//make the show hand button display current players name
 
-			guiPlayerCardsPanel.setShowHandButton();// make the show hand button display current players name
+			
 
 			// if the r key is pressed
 
