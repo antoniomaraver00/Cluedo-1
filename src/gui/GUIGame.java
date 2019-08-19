@@ -299,6 +299,9 @@ public class GUIGame extends JFrame {
 	public boolean getMoveable() {
 		return canMove;
 	}
+	public GUIPlayerCardsPanel getCardPanel() {
+		return guiPlayerCardsPanel;
+	}
 
 	/*
 	 * keyboard listener for game short cuts

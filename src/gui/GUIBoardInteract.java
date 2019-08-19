@@ -53,6 +53,9 @@ public class GUIBoardInteract extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!gg.getMoveable()&&(lastPlayerToRoll==null || lastPlayerToRoll!=board.getCurrentPlayer())) {//ensure the player does not roll die twice
+					gg.getCardPanel().setShowHandButton();//display current players name on card panel
+					resetTextField();//reset the text field so it is open for input again
+					
 					int roll = board.getDice().roll();
 					lastPlayerToRoll=board.getCurrentPlayer();//set the previous player to roll as the current player.
 					changeDiceValue(roll);// change the dice value on screen
@@ -186,6 +189,7 @@ public class GUIBoardInteract extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!board.gameover() && gg.getMoveable()) {
+					resetTextField();//reset the text field so it is open for input again
 					// move the player
 					int move = board.activeMove("" + "w", gg.getDiceRoll());
 					// check if the player has entered a room
@@ -233,6 +237,7 @@ public class GUIBoardInteract extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!board.gameover() && gg.getMoveable()) {
+					resetTextField();//reset the text field so it is open for input again
 					// move the player
 					int move = board.activeMove("" + "s", gg.getDiceRoll());
 					// check if the player has entered a room
@@ -280,6 +285,7 @@ public class GUIBoardInteract extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!board.gameover() && gg.getMoveable()) {
+					resetTextField();//reset the text field so it is open for input again
 					// move the player
 					int move = board.activeMove("" + "a", gg.getDiceRoll());
 					// check if the player has entered a room
@@ -327,6 +333,7 @@ public class GUIBoardInteract extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!board.gameover() && gg.getMoveable()) {
+					resetTextField();//reset the text field so it is open for input again
 					// move the player
 					int move = board.activeMove("" + "d", gg.getDiceRoll());
 					// check if the player has entered a room
