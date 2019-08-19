@@ -2,12 +2,10 @@ package gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 
 import cards.Card;
 import cards.Room;
 import game.Board;
-import game.Dice;
 import player.Player;
 
 import java.awt.*;
@@ -16,9 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class GUIGame extends JFrame {
 	private JPanel panel = new JPanel();
@@ -30,7 +25,6 @@ public class GUIGame extends JFrame {
 	private int width, height;
 	private boolean canMove; // checks if the current player can move
 	private int diceRoll = 0;
-	private ArrayList<Integer> playerRolls = new ArrayList<>();
 	private GameSounds sounds = new GameSounds();
 
 	public GUIGame() {
@@ -378,7 +372,7 @@ public class GUIGame extends JFrame {
 	}
 
 	/*
-	 * mouse listener to change the cursor
+	 * mouse listener to change the cursor and add a sounds when the mouse is clicked
 	 */
 
 	private class MouseListner extends MouseAdapter {
@@ -404,14 +398,6 @@ public class GUIGame extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent event) {
 			sounds.mouseClickSound();
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
 		}
 	}
 
