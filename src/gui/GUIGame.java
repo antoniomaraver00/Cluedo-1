@@ -1,5 +1,6 @@
 package gui;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
@@ -11,6 +12,9 @@ import player.Player;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -28,6 +32,7 @@ public class GUIGame extends JFrame {
 	private boolean canMove; // checks if the current player can move
 	private int diceRoll = 0;
 	private ArrayList<Integer> playerRolls = new ArrayList<>();
+	private GameSounds sounds = new GameSounds();
 
 	public GUIGame() {
 		setTitle("Cluedo");
@@ -54,8 +59,11 @@ public class GUIGame extends JFrame {
 		addKeyListener(new KeyboardListener());
 		setFocusable(true);
 
+		addMouseListener(new MouseListner());
+
 		this.add(panel);
 
+		sounds.backgroundMusic();
 	}
 
 	private void addMenuBar() {
@@ -280,13 +288,17 @@ public class GUIGame extends JFrame {
 		JOptionPane.showMessageDialog(null, result);
 	}
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			GUIGame game = new GUIGame();
-			game.setVisible(true);
-		});
+	public void setDiceRoll(int roll) {
+		diceRoll = roll;
 	}
 
+	public void setMoveable() {
+		canMove = true;
+	}
+
+	/*
+	 * keyboard listener for game short cuts
+	 */
 	private class KeyboardListener implements KeyListener {
 		@Override
 		public void keyTyped(KeyEvent e) {
@@ -358,12 +370,49 @@ public class GUIGame extends JFrame {
 		}
 	}
 
-	public void setDiceRoll(int roll) {
-		diceRoll = roll;
+	/*
+	 * mouse listener to change the cursor
+	 */
+
+	private class MouseListner extends MouseAdapter {
+		private BufferedImage mCursor; // the custom cursor's image
+		private Cursor cursor;
+
+		public MouseListner() {
+			try {
+				// get the image
+				mCursor = ImageIO.read(new File("src/gui/cursor.png"));
+
+				// initialize the cursor
+				cursor = Toolkit.getDefaultToolkit().createCustomCursor(mCursor,
+						new Point(getContentPane().getX(), getContentPane().getY()), "custom cursor");
+
+				// add it to the JFrame
+				setCursor(cursor);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent event) {
+			sounds.mouseClickSound();
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
 	}
 
-	public void setMoveable() {
-		canMove = true;
+	public static void main(String[] args) {
+		EventQueue.invokeLater(() -> {
+			GUIGame game = new GUIGame();
+			game.setVisible(true);
+			game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		});
 	}
-
 }
