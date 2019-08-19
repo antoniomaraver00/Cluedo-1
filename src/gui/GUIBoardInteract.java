@@ -8,6 +8,8 @@ import java.awt.event.KeyListener;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.image.*;
+import java.util.ArrayList;
+
 import game.Board;
 
 public class GUIBoardInteract extends JPanel {
@@ -19,6 +21,8 @@ public class GUIBoardInteract extends JPanel {
 	private int rollValue;
 	private int rollCount = 0;
 	private JPanel dpanel;// jpanel which displays value of dice roll
+	private JDialog mydialog;
+	private JTextField takeNote = new JTextField();
 
 	public GUIBoardInteract(Board board, GUIGame gg) {
 		this.gg = gg;
@@ -37,6 +41,8 @@ public class GUIBoardInteract extends JPanel {
 		// set 2x4 button layout with gap of 2
 		this.setLayout(new GridLayout(2, 4, 2, 0));// set button layout
 		// set player choice keys
+
+		// roll button initialization
 		JButton rollButton = new JButton(new AbstractAction("roll") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -46,19 +52,57 @@ public class GUIBoardInteract extends JPanel {
 				rollCount++;// incrememnt the total number of rolls in the game so far
 			}
 		});
-		JButton suggest = new JButton("Make suggestion");
-		JButton accuse = new JButton("Make accusation");
+		rollButton.setToolTipText("Roll the Dice");
+
+		// note button/text-field initialization
+		
+		
+		takeNote.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				board.getCurrentPlayer().setNotes(takeNote.getText());//player adds note to list of note/s
+				takeNote.setFocusable(false);
+				takeNote.setText(null);
+			}
+		});
+
+		JButton readNote = new JButton(new AbstractAction("Read note") {//bring up a window displaying players notes
+			@Override
+			public void actionPerformed(ActionEvent e) {
+								
+				mydialog = new JDialog();
+				mydialog.setLayout(new GridLayout(0,1,0,0));
+                mydialog.setSize(new Dimension(400,400));
+                mydialog.setTitle(board.getCurrentPlayer()+"'s notes");
+                
+                for (int i = 0; i<board.getCurrentPlayer().getNotes().size(); i++) {//add each note of current player to their notepad
+                	JLabel jlb = new JLabel(board.getCurrentPlayer().getNotes().get(i));
+                	mydialog.add(jlb);
+                }
+                
+                mydialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL); // prevent user from doing something else
+                mydialog.setVisible(true);            
+                
+                
+			}
+		});	
 
 		// set arrow key buttons
 		JButton arrowUP = new JButton("");
+		arrowUP.setToolTipText("Move Up");
+
 		JButton arrowDOWN = new JButton("");
+		arrowDOWN.setToolTipText("Move Down");
+
 		JButton arrowLEFT = new JButton("");
+		arrowLEFT.setToolTipText("Move Left");
+
 		JButton arrowRIGHT = new JButton("");
+		arrowRIGHT.setToolTipText("Move Right");
 
 		// set button to non focusable
 		rollButton.setFocusable(false);
-		suggest.setFocusable(false);
-		accuse.setFocusable(false);
+		
+		readNote.setFocusable(false);
 		arrowUP.setFocusable(false);
 		arrowDOWN.setFocusable(false);
 		arrowLEFT.setFocusable(false);
@@ -77,13 +121,13 @@ public class GUIBoardInteract extends JPanel {
 
 		// add buttons to panel
 		add(rollButton);
-		add(suggest);
-		add(accuse);
+		add(takeNote);
+		add(readNote);
 		add(arrowUP);
 		add(arrowDOWN);
 		add(arrowLEFT);
 		add(arrowRIGHT);
-		
+
 	}
 
 	public void changeDiceValue(int roll) {
@@ -122,6 +166,9 @@ public class GUIBoardInteract extends JPanel {
 
 	public void setRollCount() {
 		rollCount++;
+	}
+	public void resetTextField() {
+		takeNote.setFocusable(true);
 	}
 
 }

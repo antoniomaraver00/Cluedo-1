@@ -22,7 +22,6 @@ public class GUIGame extends JFrame {
 	private GUIBoard guiBoard = new GUIBoard(board);
 	private GUIBoardInteract guiBoardLowerPanel = new GUIBoardInteract(board, this);
 	private GUIPlayerCardsPanel guiPlayerCardsPanel = new GUIPlayerCardsPanel(board);
-	private GUIArrowKeys guiArrowKeys = new GUIArrowKeys(board);
 	private Dimension screenSize;
 	private int width, height;
 	private boolean canMove; // checks if the current player can move
@@ -203,6 +202,7 @@ public class GUIGame extends JFrame {
 
 		bottomPane();// initialize the bottom interaction pane
 		cardPane();// initialise right hand player card pane
+	
 		board.setCurrentPlayer(board.getPlayers().get(0));
 
 		startGame();// start rounds
@@ -214,7 +214,7 @@ public class GUIGame extends JFrame {
 		// int firstPlayer = findWhoGoesFirst();
 
 	}
-
+	
 	public void bottomPane() {
 		add(guiBoardLowerPanel, BorderLayout.SOUTH);
 	}
@@ -276,6 +276,7 @@ public class GUIGame extends JFrame {
 			result = board.doAccusation(board.getCurrentPlayer(), chosenCards.toArray(new Card[chosenCards.size()]));
 		}
 
+		// show the result of the suggestion/accusation
 		JOptionPane.showMessageDialog(null, result);
 	}
 
@@ -289,16 +290,11 @@ public class GUIGame extends JFrame {
 	private class KeyboardListener implements KeyListener {
 		@Override
 		public void keyTyped(KeyEvent e) {
-
-			// if the r key is pressed
-
-			
-			guiPlayerCardsPanel.setShowHandButton();//make the show hand button display current players name
-
+			guiPlayerCardsPanel.setShowHandButton();// make the show hand button display current players name
+			guiBoardLowerPanel.resetTextField();//reset the text field so it is open for input again
 			
 
 			// if the r key is pressed
-
 			if (e.getKeyChar() == 'r' && !canMove) {
 
 				// roll the dice, and allow the player move
@@ -315,28 +311,23 @@ public class GUIGame extends JFrame {
 					int move = board.activeMove("" + e.getKeyChar(), diceRoll);
 					// check if the player has entered a room
 					Room currentRoom = board.getRoom(board.getCurrentPlayer());
-					if (currentRoom==null) {board.getCurrentPlayer().setPreviousRoom(null);}
+					if (currentRoom == null) {
+						board.getCurrentPlayer().setPreviousRoom(null);
+					}
 					// check if the move is valid
-					if (move >= 0&&currentRoom==null) {
+					if (move >= 0 && currentRoom == null) {
 						diceRoll = move;
 					}
 
-
-					
-					if (currentRoom != null&&board.getCurrentPlayer().getPreviousRoom()==null) {//player has entered room from hallway												
-
-					
-
-					if (currentRoom != null) {
-
+					// player has entered room from hallway
+					if (currentRoom != null && board.getCurrentPlayer().getPreviousRoom() == null) {
+						// don't allow the player to move anymore
 						diceRoll = 0;
+						// set the player's previous room
 						board.getCurrentPlayer().setPreviousRoom(currentRoom);
-						
+
+						// do a suggestion/accusation
 						handleInsideRoom(currentRoom);
-
-						 
-						board.nextPlayer();
-
 
 						// if the player has entered to a new room
 						if (board.getCurrentPlayer().getPreviousRoom() == null) {
@@ -345,18 +336,16 @@ public class GUIGame extends JFrame {
 							// ask them to make a suggestion/accusation
 							handleInsideRoom(currentRoom);
 						}
-					
-
-					} 
+					}
+					// if the move count is less than 1
+					if (diceRoll <= 0 && canMove) {
+						// disable player's movement
+						canMove = false;
+						// allow the next player to move
+						board.setCurrentPlayer(((Board) board).nextPlayer());
+					}
 				}
-				// if the move count is less than 1
-				if (diceRoll <= 0 && canMove) {
-					// disable player's movement
-					canMove = false;
-					// allow the next player to move
-					board.setCurrentPlayer(((Board) board).nextPlayer());
-				}
-			}}
+			}
 		}
 
 		@Override

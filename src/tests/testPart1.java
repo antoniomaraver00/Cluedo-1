@@ -75,8 +75,7 @@ class testPart1 {
 
 		board.spawnPlayers();
 
-		String excpectedGrid = 
-				"|#|#|#|#|#|#|#|S|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
+		String excpectedGrid = "|#|#|#|#|#|#|#|S|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|_|_|_|_|#|_|_|_|_|#|_|_|_|_|_|_|_|_|#|\n"
@@ -109,11 +108,11 @@ class testPart1 {
 	 * test a false accusation
 	 */
 	@Test
-	void falseAccusationResult() {
+	void falseAccusation() {
 		Board board = createBoard(3);
 
 		board.spawnPlayers();
-		
+
 		Player currentPlayer = board.getPlayers().get(0);
 		board.setCurrentPlayer(currentPlayer);
 
@@ -121,58 +120,76 @@ class testPart1 {
 		// the first player's movement into the closest room
 		String movement = "sssaaa";
 
-		int result = -1;
-
 		// start the game
 		for (int i = 0; i < movement.length(); i++) {
-			result = board.activeMove(movement.substring(i, i + 1), diceRoll);
+			board.activeMove(movement.substring(i, i + 1), diceRoll);
 		}
-		
+
+		// get the current room the player is in, which should be the study room
 		Room currentRoom = board.getRoom(board.getCurrentPlayer());
-		assertTrue(currentRoom != null);
-		
+
+		// get the cards that the player can accuse
 		Card[][] availableCards = board.getCurrentPlayer().chooseCards(board.getCurrentPlayer().getCurrentRoom(),
 				board.getWeapons(), board.getSuspects());
-		
-		Card[] chosenCards = new Card[3];
-		int  index = 0;
-		
+
+		// cards chosen from the list above
+		Card[] chosenCards = new Card[2];
+		// index of the last element in chosenCards
+		int index = 0;
+
+		// get the other two players
 		Player player2 = board.getPlayers().get(1);
 		Player player3 = board.getPlayers().get(2);
-		
-		if(!currentPlayer.getHand().contains(currentRoom)) {
+
+		// check if the current player doesn't have the study card in their hand
+		if (!currentPlayer.getHand().contains(currentRoom)) {
 			chosenCards[index] = currentRoom;
 			index++;
 		}
-		
-		for(int i = 0; i < availableCards.length; i++) {
-			for(int j = 0; j < availableCards[i].length; j++) {
-				
-				if(index > 3) {
-					break;
+
+		// the outer loop loops through the two available card types; ie, weapon, and
+		// suspect
+		outerloop: for (int i = 0; i < availableCards.length; i++) {
+			// the inner loop loops through the actual cards within the current card type
+			for (int j = 0; j < availableCards[i].length; j++) {
+
+				// break the outer loop if two cards were added to chosenCards
+				if (index > 1) {
+					break outerloop;
 				}
-				
-				for(Card c : player2.getHand()) {
-					if(c.toString().equals(availableCards[i][j].toString())) {
+
+				// get one card of the current type from the second player's hand
+				for (Card c : player2.getHand()) {
+					// if a card is found
+					if (c.toString().equals(availableCards[i][j].toString())) {
+						// add it to the list
 						chosenCards[index] = availableCards[i][j];
+						index++;
+						// break the inner loop and move on to the next card type
+						break outerloop;
 					}
 				}
-				
-				for(Card c : player3.getHand()) {
-					if(c.toString().equals(availableCards[i][j].toString())) {
+
+				// get one card of the current type from the third player's hand
+				for (Card c : player3.getHand()) {
+					// if a card is found
+					if (c.toString().equals(availableCards[i][j].toString())) {
+						// add it to the list
 						chosenCards[index] = availableCards[i][j];
+						index++;
+						// break the inner loop and move on to the next card type
+						break outerloop;
 					}
 				}
 			}
 		}
-		
-		System.out.println(Arrays.toString(chosenCards));
-		
+
+		// do an accusation with the cards we got
 		board.doAccusation(currentPlayer, chosenCards);
 
-		// the first player; ie, Miss Scarlett shouldn't be on the board
-		String excpectedGrid = 
-				"|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
+		// the first player; ie, Miss Scarlet should be eliminated from the game, and
+		// therefore not on the board
+		String excpectedGrid = "|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|_|_|_|_|#|_|_|_|_|#|_|_|_|_|_|_|_|_|#|\n"
@@ -184,7 +201,7 @@ class testPart1 {
 				+ "|#|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|#|\n"
 				+ "|#|#|#|#|#|#|_|_|_|_|_|_|_|_|_|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|_|#|#|#|#|_|_|_|_|#|#|#|#|#|#|\n"
-				+ "|#|_|_|_|_|_|_|_|_|_|#|*|*|#|_|_|_|_|_|_|_|_|_|+|\n"
+				+ "|#|_|_|_|_|_|_|_|_|_|#|#|#|#|_|_|_|_|_|_|_|_|_|+|\n"
 				+ "|#|_|_|_|_|#|_|_|_|_|#|_|_|#|_|_|_|_|#|#|#|#|#|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|_|_|_|_|_|_|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|#|#|#|#|#|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|#|\n"
@@ -206,28 +223,89 @@ class testPart1 {
 	 */
 
 	@Test
-	void suggestionResult() {
+	void correctSuggestion() {
 		Board board = createBoard(3);
 
 		board.spawnPlayers();
-		board.setCurrentPlayer(board.getPlayers().get(0));
 
-		int diceRoll = 12;
+		Player currentPlayer = board.getPlayers().get(0);
+		board.setCurrentPlayer(currentPlayer);
+
+		int diceRoll = 1;
 		// the first player's movement into the closest room
 		String movement = "sssaaa";
-		// the player's suggestions
-		String accusations = "1 1 1";
-
-		int result = -1;
 
 		// start the game
 		for (int i = 0; i < movement.length(); i++) {
-			result = board.activeMove(movement.substring(i, i + 1), diceRoll);
+			board.activeMove(movement.substring(i, i + 1), diceRoll);
 		}
 
-		// test the result
-		//assertTrue(
-			//	result == "none of the players have any of the cards you suggested" || result.contains("has the card"));
+		// get the current room the player is in, which should be the study room
+		Room currentRoom = board.getRoom(board.getCurrentPlayer());
+
+		// get the cards that the player can accuse
+		Card[][] availableCards = board.getCurrentPlayer().chooseCards(board.getCurrentPlayer().getCurrentRoom(),
+				board.getWeapons(), board.getSuspects());
+
+		// cards chosen from the list above
+		Card[] chosenCards = new Card[2];
+		// index of the last element in chosenCards
+		int index = 0;
+
+		// get the second player
+		Player player2 = board.getPlayers().get(1);
+		Player player3 = board.getPlayers().get(2);
+
+		// check if the current player doesn't have the study card in their hand
+		if (!currentPlayer.getHand().contains(currentRoom)) {
+			chosenCards[index] = currentRoom;
+			index++;
+		}
+
+		// the outer loop loops through the two available card types; ie, weapon, and
+		// suspect
+		outerloop: for (int i = 0; i < availableCards.length; i++) {
+			// the inner loop loops through the actual cards within the current card type
+			for (int j = 0; j < availableCards[i].length; j++) {
+
+				// break the outer loop if two cards were added to chosenCards
+				if (index > 1) {
+					break outerloop;
+				}
+
+				// get one card of the current type from the second player's hand
+				for (Card c : player2.getHand()) {
+					// if a card is found
+					if (c == availableCards[i][j]) {
+						// add it to the list
+						chosenCards[index] = availableCards[i][j];
+						index++;
+						// break the inner loop and move on to the next card type
+						break outerloop;
+					}
+				}
+
+				// get one card of the current type from the third player's hand
+				for (Card c : player3.getHand()) {
+					// if a card is found
+					if (c == availableCards[i][j]) {
+						// add it to the list
+						chosenCards[index] = availableCards[i][j];
+						index++;
+						// break the inner loop and move on to the next card type
+						break outerloop;
+					}
+				}
+			}
+		}
+
+		// do a suggestion with the cards we got
+		String suggestionResult = board.doSuggestion(currentPlayer, chosenCards);
+
+		System.out.println(suggestionResult);
+
+		// check the outcome of the false suggestion
+		assert (suggestionResult.contains("has the card:"));
 
 		// check if Miss Scarlett is in the right position after the suggestion
 		String expectedGrid = "|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|M|#|#|#|#|#|#|#|\n"
@@ -242,7 +320,7 @@ class testPart1 {
 				+ "|#|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|#|\n"
 				+ "|#|#|#|#|#|#|_|_|_|_|_|_|_|_|_|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|_|#|#|#|#|_|_|_|_|#|#|#|#|#|#|\n"
-				+ "|#|_|_|_|_|_|_|_|_|_|#|*|*|#|_|_|_|_|_|_|_|_|_|+|\n"
+				+ "|#|_|_|_|_|_|_|_|_|_|#|#|#|#|_|_|_|_|_|_|_|_|_|+|\n"
 				+ "|#|_|_|_|_|#|_|_|_|_|#|_|_|#|_|_|_|_|#|#|#|#|#|#|\n"
 				+ "|#|_|_|_|_|#|_|_|_|_|_|_|_|_|_|_|_|_|#|_|_|_|_|#|\n"
 				+ "|#|#|#|#|#|#|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|#|\n"
@@ -269,7 +347,7 @@ class testPart1 {
 		for (int i = 0; i < numOfPlayers; i++) {
 			board.addPlayer(allPlayers[i]);
 		}
-		
+
 		board.distributeCards(numOfPlayers);
 		board.spawnPlayers();
 

@@ -79,7 +79,8 @@ public class GUIPlayerCardsPanel extends JPanel {
 
 		// write current player name on top of card
 		if (board.getCurrentPlayer() != null && board.getCurrentPlayer().getHand() != null) {
-			String buffer = "                                    ";			
+			String buffer = "                                    ";	
+			
 			//shows cards of current player
 			if (shownLabels.isEmpty()) {
 				for (int i = 0; i < board.getCurrentPlayer().getHand().size(); i++) {

@@ -157,7 +157,7 @@ public class Board {
 						currentPlayer.excludeCard(revealedCard);
 
 						// notify the player of who has the card they are looking for
-						return p.toString() + " has the card " + chosenCards[i];
+						return p.toString() + " has the card: " + chosenCards[i];
 					}
 				}
 			}
