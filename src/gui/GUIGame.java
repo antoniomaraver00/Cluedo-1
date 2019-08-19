@@ -26,7 +26,6 @@ public class GUIGame extends JFrame {
 	private GUIBoard guiBoard = new GUIBoard(board);
 	private GUIBoardInteract guiBoardLowerPanel = new GUIBoardInteract(board, this);
 	private GUIPlayerCardsPanel guiPlayerCardsPanel = new GUIPlayerCardsPanel(board);
-	private GUIArrowKeys guiArrowKeys = new GUIArrowKeys(board);
 	private Dimension screenSize;
 	private int width, height;
 	private boolean canMove; // checks if the current player can move
@@ -211,6 +210,7 @@ public class GUIGame extends JFrame {
 
 		bottomPane();// initialize the bottom interaction pane
 		cardPane();// initialise right hand player card pane
+	
 		board.setCurrentPlayer(board.getPlayers().get(0));
 
 		startGame();// start rounds
@@ -222,7 +222,7 @@ public class GUIGame extends JFrame {
 		// int firstPlayer = findWhoGoesFirst();
 
 	}
-
+	
 	public void bottomPane() {
 		add(guiBoardLowerPanel, BorderLayout.SOUTH);
 	}
@@ -303,8 +303,8 @@ public class GUIGame extends JFrame {
 		@Override
 		public void keyTyped(KeyEvent e) {
 			guiPlayerCardsPanel.setShowHandButton();// make the show hand button display current players name
-
-			guiPlayerCardsPanel.setShowHandButton();// make the show hand button display current players name
+			guiBoardLowerPanel.resetTextField();//reset the text field so it is open for input again
+			
 
 			// if the r key is pressed
 			if (e.getKeyChar() == 'r' && !canMove) {

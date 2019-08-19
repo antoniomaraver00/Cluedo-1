@@ -15,6 +15,7 @@ public class Player {
 	private ArrayList<Card> cards;
 	private ArrayList<Card> excludedCards = new ArrayList<>();
 	private int SUGGESTION = 1, ACCUSATION = 2;
+	private ArrayList<String> notes = new ArrayList<String>();
 
 	public Player(ArrayList<Card> cards) {
 		this.cards = cards;
@@ -182,5 +183,11 @@ public class Player {
 	public ArrayList<Card> getHand() {
 		
 		return cards;
+	}
+	public ArrayList<String> getNotes(){
+		return notes;
+	}
+	public void setNotes(String s) {
+		notes.add(s);
 	}
 }
