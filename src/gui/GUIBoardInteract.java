@@ -7,10 +7,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
+import cards.Room;
+
 import java.awt.image.*;
 import java.util.ArrayList;
 
 import game.Board;
+import player.Player;
 
 public class GUIBoardInteract extends JPanel {
 	private GUIGame gg;
@@ -23,6 +27,7 @@ public class GUIBoardInteract extends JPanel {
 	private JPanel dpanel;// jpanel which displays value of dice roll
 	private JDialog mydialog;
 	private JTextField takeNote = new JTextField();
+	private Player lastPlayerToRoll;
 
 	public GUIBoardInteract(Board board, GUIGame gg) {
 		this.gg = gg;
@@ -34,7 +39,8 @@ public class GUIBoardInteract extends JPanel {
 	private void setup() {
 		// create panel for dice roll value
 		createDicePanel();
-
+		
+		
 		setBorder(new LineBorder(Color.RED, 5));// red boarder around panel
 		setPreferredSize(new Dimension(0, 75));// size of panel to cover bottom of window
 		this.setBackground(Color.LIGHT_GRAY);
@@ -46,17 +52,18 @@ public class GUIBoardInteract extends JPanel {
 		JButton rollButton = new JButton(new AbstractAction("roll") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int roll = board.getDice().roll();
-
-				changeDiceValue(roll);// change the dice value on screen
-				rollCount++;// incrememnt the total number of rolls in the game so far
+				if (!gg.getMoveable()&&(lastPlayerToRoll==null || lastPlayerToRoll!=board.getCurrentPlayer())) {//ensure the player does not roll die twice
+					int roll = board.getDice().roll();
+					lastPlayerToRoll=board.getCurrentPlayer();//set the previous player to roll as the current player.
+					changeDiceValue(roll);// change the dice value on screen
+					
+					rollCount++;// incrememnt the total number of rolls in the game so far
+				}
 			}
 		});
 		rollButton.setToolTipText("Roll the Dice");
 
 		// note button/text-field initialization
-		
-		
 		takeNote.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				board.getCurrentPlayer().setNotes(takeNote.getText());//player adds note to list of note/s
@@ -70,7 +77,7 @@ public class GUIBoardInteract extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 								
 				mydialog = new JDialog();
-				mydialog.setLayout(new GridLayout(0,1,0,0));
+				mydialog.setLayout(new GridLayout(15,1,0,0));
                 mydialog.setSize(new Dimension(400,400));
                 mydialog.setTitle(board.getCurrentPlayer()+"'s notes");
                 
@@ -87,16 +94,16 @@ public class GUIBoardInteract extends JPanel {
 		});	
 
 		// set arrow key buttons
-		JButton arrowUP = new JButton("");
+		JButton arrowUP = arrowUp();
 		arrowUP.setToolTipText("Move Up");
 
-		JButton arrowDOWN = new JButton("");
+		JButton arrowDOWN = arrowDown();
 		arrowDOWN.setToolTipText("Move Down");
 
-		JButton arrowLEFT = new JButton("");
+		JButton arrowLEFT = arrowLeft();
 		arrowLEFT.setToolTipText("Move Left");
 
-		JButton arrowRIGHT = new JButton("");
+		JButton arrowRIGHT = arrowRight();
 		arrowRIGHT.setToolTipText("Move Right");
 
 		// set button to non focusable
@@ -129,11 +136,13 @@ public class GUIBoardInteract extends JPanel {
 		add(arrowRIGHT);
 
 	}
+	
+	
 
 	public void changeDiceValue(int roll) {
 		dpanel.removeAll();
 		gg.setDiceRoll(roll);// send diceValue to game
-		gg.setMoveable();// let game know that dice is rolled and player is now moveable
+		gg.setMoveableTrue();// let game know that dice is rolled and player is now moveable
 
 		// create label showing number rolled
 		JLabel dvl = new JLabel();
@@ -169,6 +178,195 @@ public class GUIBoardInteract extends JPanel {
 	}
 	public void resetTextField() {
 		takeNote.setFocusable(true);
+	}
+	// arrow button action listener methods
+	
+	private JButton arrowUp() {
+		return new JButton(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!board.gameover() && gg.getMoveable()) {
+					// move the player
+					int move = board.activeMove("" + "w", gg.getDiceRoll());
+					// check if the player has entered a room
+					Room currentRoom = board.getRoom(board.getCurrentPlayer());
+					if (currentRoom == null) {
+						board.getCurrentPlayer().setPreviousRoom(null);
+					}
+					// check if the move is valid
+					if (move >= 0 && currentRoom == null) {
+						gg.setDiceRoll(move);
+					}
+
+					// player has entered room from hallway
+					if (currentRoom != null && board.getCurrentPlayer().getPreviousRoom() == null) {
+						// don't allow the player to move anymore
+						gg.setDiceRoll(0);
+						// set the player's previous room
+						board.getCurrentPlayer().setPreviousRoom(currentRoom);
+
+						// do a suggestion/accusation
+						gg.handleInsideRoom(currentRoom);
+
+						// if the player has entered to a new room
+						if (board.getCurrentPlayer().getPreviousRoom() == null) {
+							// don't allow them to make anymore moves
+							gg.setDiceRoll(0);
+							// ask them to make a suggestion/accusation
+							gg.handleInsideRoom(currentRoom);
+						}
+					}
+					// if the move count is less than 1
+					if (gg.getDiceRoll() <= 0 && gg.getMoveable()) {
+						// disable player's movement
+						gg.setMoveableFalse(); 
+						// allow the next player to move
+						board.setCurrentPlayer(((Board) board).nextPlayer());
+					}
+				}
+			}
+		});
+	}
+	
+	private JButton arrowDown() {
+		return new JButton(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!board.gameover() && gg.getMoveable()) {
+					// move the player
+					int move = board.activeMove("" + "s", gg.getDiceRoll());
+					// check if the player has entered a room
+					Room currentRoom = board.getRoom(board.getCurrentPlayer());
+					if (currentRoom == null) {
+						board.getCurrentPlayer().setPreviousRoom(null);
+					}
+					// check if the move is valid
+					if (move >= 0 && currentRoom == null) {
+						gg.setDiceRoll(move);
+					}
+
+					// player has entered room from hallway
+					if (currentRoom != null && board.getCurrentPlayer().getPreviousRoom() == null) {
+						// don't allow the player to move anymore
+						gg.setDiceRoll(0);
+						// set the player's previous room
+						board.getCurrentPlayer().setPreviousRoom(currentRoom);
+
+						// do a suggestion/accusation
+						gg.handleInsideRoom(currentRoom);
+
+						// if the player has entered to a new room
+						if (board.getCurrentPlayer().getPreviousRoom() == null) {
+							// don't allow them to make anymore moves
+							gg.setDiceRoll(0);
+							// ask them to make a suggestion/accusation
+							gg.handleInsideRoom(currentRoom);
+						}
+					}
+					// if the move count is less than 1
+					if (gg.getDiceRoll() <= 0 && gg.getMoveable()) {
+						// disable player's movement
+						gg.setMoveableFalse(); 
+						// allow the next player to move
+						board.setCurrentPlayer(((Board) board).nextPlayer());
+					}
+				}
+			}
+		});
+	}
+	
+	private JButton arrowLeft() {
+		return new JButton(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!board.gameover() && gg.getMoveable()) {
+					// move the player
+					int move = board.activeMove("" + "a", gg.getDiceRoll());
+					// check if the player has entered a room
+					Room currentRoom = board.getRoom(board.getCurrentPlayer());
+					if (currentRoom == null) {
+						board.getCurrentPlayer().setPreviousRoom(null);
+					}
+					// check if the move is valid
+					if (move >= 0 && currentRoom == null) {
+						gg.setDiceRoll(move);
+					}
+
+					// player has entered room from hallway
+					if (currentRoom != null && board.getCurrentPlayer().getPreviousRoom() == null) {
+						// don't allow the player to move anymore
+						gg.setDiceRoll(0);
+						// set the player's previous room
+						board.getCurrentPlayer().setPreviousRoom(currentRoom);
+
+						// do a suggestion/accusation
+						gg.handleInsideRoom(currentRoom);
+
+						// if the player has entered to a new room
+						if (board.getCurrentPlayer().getPreviousRoom() == null) {
+							// don't allow them to make anymore moves
+							gg.setDiceRoll(0);
+							// ask them to make a suggestion/accusation
+							gg.handleInsideRoom(currentRoom);
+						}
+					}
+					// if the move count is less than 1
+					if (gg.getDiceRoll() <= 0 && gg.getMoveable()) {
+						// disable player's movement
+						gg.setMoveableFalse(); 
+						// allow the next player to move
+						board.setCurrentPlayer(((Board) board).nextPlayer());
+					}
+				}
+			}
+		});
+	}
+	
+	private JButton arrowRight() {
+		return new JButton(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!board.gameover() && gg.getMoveable()) {
+					// move the player
+					int move = board.activeMove("" + "d", gg.getDiceRoll());
+					// check if the player has entered a room
+					Room currentRoom = board.getRoom(board.getCurrentPlayer());
+					if (currentRoom == null) {
+						board.getCurrentPlayer().setPreviousRoom(null);
+					}
+					// check if the move is valid
+					if (move >= 0 && currentRoom == null) {
+						gg.setDiceRoll(move);
+					}
+
+					// player has entered room from hallway
+					if (currentRoom != null && board.getCurrentPlayer().getPreviousRoom() == null) {
+						// don't allow the player to move anymore
+						gg.setDiceRoll(0);
+						// set the player's previous room
+						board.getCurrentPlayer().setPreviousRoom(currentRoom);
+
+						// do a suggestion/accusation
+						gg.handleInsideRoom(currentRoom);
+
+						// if the player has entered to a new room
+						if (board.getCurrentPlayer().getPreviousRoom() == null) {
+							// don't allow them to make anymore moves
+							gg.setDiceRoll(0);
+							// ask them to make a suggestion/accusation
+							gg.handleInsideRoom(currentRoom);
+						}
+					}
+					// if the move count is less than 1
+					if (gg.getDiceRoll() <= 0 && gg.getMoveable()) {
+						// disable player's movement
+						gg.setMoveableFalse(); 
+						// allow the next player to move
+						board.setCurrentPlayer(((Board) board).nextPlayer());
+					}
+				}
+			}
+		});
 	}
 
 }

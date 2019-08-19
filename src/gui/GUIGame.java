@@ -213,15 +213,10 @@ public class GUIGame extends JFrame {
 	
 		board.setCurrentPlayer(board.getPlayers().get(0));
 
-		startGame();// start rounds
+		
 	}
 
-	public void startGame() {
-		// start by rolling off
-
-		// int firstPlayer = findWhoGoesFirst();
-
-	}
+	
 	
 	public void bottomPane() {
 		add(guiBoardLowerPanel, BorderLayout.SOUTH);
@@ -231,7 +226,7 @@ public class GUIGame extends JFrame {
 		add(guiPlayerCardsPanel, BorderLayout.EAST);
 	}
 
-	private void handleInsideRoom(Room currentRoom) {
+	public void handleInsideRoom(Room currentRoom) {
 		board.getCurrentPlayer().setPreviousRoom(currentRoom);
 
 		// options the player has to make inside the room
@@ -291,9 +286,18 @@ public class GUIGame extends JFrame {
 	public void setDiceRoll(int roll) {
 		diceRoll = roll;
 	}
+	public int getDiceRoll() {
+		return diceRoll;
+	}
 
-	public void setMoveable() {
+	public void setMoveableTrue() {
 		canMove = true;
+	}
+	public void setMoveableFalse() {
+		canMove = false;
+	}
+	public boolean getMoveable() {
+		return canMove;
 	}
 
 	/*
