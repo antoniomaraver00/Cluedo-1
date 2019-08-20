@@ -257,10 +257,7 @@ public class GUIGame extends JFrame {
 
 		ArrayList<Card> chosenCards = new ArrayList<>();
 
-		if (board.getCurrentPlayer().getExcludedCards().contains(currentRoom)) {
-			chosenCards.add(currentRoom);
-		}
-
+		chosenCards.add(currentRoom);
 		chosenCards.add(murderWeapon);
 		chosenCards.add(suspect);
 

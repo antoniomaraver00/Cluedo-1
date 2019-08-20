@@ -12,7 +12,9 @@ public class Rope implements Weapon {
 	
 	@Override
 	public boolean equals(Card c) {
-		if (this.toString()==c.toString()) {return true;}
+		if (this.toString().equals(c.toString())) {
+			return true;
+		}
 		return false;
 	}
 }
