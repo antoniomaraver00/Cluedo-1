@@ -1,0 +1,14 @@
+/gui/
+<<<<<<< Updated upstream
+||||||| merged common ancestors
+/tests/
+/player/
+=======
+/tests/
+/player/
+/weapons/
+>>>>>>> Stashed changes
+/resources/
+/game/
+/cards/
+/rooms/

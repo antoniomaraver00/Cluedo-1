@@ -106,13 +106,14 @@ public class Board {
 
 	public String doAccusation(Player currentPlayer, Card[] chosenCards) {
 		int cardFound = 0;
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < hiddenCards.size(); i++) {
 			for (int j = 0; j < chosenCards.length; j++) {
 				if (hiddenCards.get(i).equals(chosenCards[j])) {
 					cardFound++;
 				}
 			}
 		}
+		
 		if (cardFound == 3) {
 			gameOver = true;
 

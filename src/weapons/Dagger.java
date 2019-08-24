@@ -5,14 +5,16 @@ import cards.Weapon;
 
 public class Dagger implements Weapon {
 	final String name = "Dagger";
-	
+
 	public String toString() {
 		return this.name;
 	}
-	
+
 	@Override
 	public boolean equals(Card c) {
-		if (this.toString()==c.toString()) {return true;}
+		if (this.toString().equals(c.toString())) {
+			return true;
+		}
 		return false;
 	}
 }
